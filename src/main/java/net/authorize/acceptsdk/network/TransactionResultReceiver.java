@@ -4,9 +4,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 
-/**
- * Created by fzubair on 10/22/2015.
- */
 
 public class TransactionResultReceiver extends ResultReceiver {
 

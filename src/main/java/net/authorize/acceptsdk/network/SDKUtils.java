@@ -45,8 +45,7 @@ import javax.net.ssl.X509TrustManager;
 /**
  * This class provides static common methods to be used by other classes in the
  * project.
- * 
- * Created by fzubair on 10/7/2015.
+ *
  */
 
 public class SDKUtils {

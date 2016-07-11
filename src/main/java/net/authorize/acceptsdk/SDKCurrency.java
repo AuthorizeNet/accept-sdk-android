@@ -12,7 +12,7 @@ package net.authorize.acceptsdk;
  * <li>USD ( $ )</li>
  * </ul>
  * 
- * Created by fzubair on 10/7/2015.
+ *
  */
 public enum SDKCurrency {
 

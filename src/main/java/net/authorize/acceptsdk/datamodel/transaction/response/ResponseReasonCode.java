@@ -3,9 +3,7 @@ package net.authorize.acceptsdk.datamodel.transaction.response;
 /**
  * <b>public enum ResponseReasonCode</b>
  * <br><br>
- * Reason code coming from CyberSource response.
- * 
- * Created by fzubair on 10/8/2015.
+ *
  */
 public enum ResponseReasonCode {
  //TODO : Need to modify this code.
