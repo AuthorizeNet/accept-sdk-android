@@ -12,12 +12,17 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.SocketTimeoutException;
 import javax.net.ssl.HttpsURLConnection;
+import net.authorize.acceptsdk.common.error.AcceptError;
+import net.authorize.acceptsdk.common.error.AcceptGatewayError;
+import net.authorize.acceptsdk.common.error.AcceptInternalError;
 import net.authorize.acceptsdk.datamodel.transaction.EncryptTransactionObject;
 import net.authorize.acceptsdk.datamodel.transaction.response.EncryptTransactionResponse;
 import net.authorize.acceptsdk.parser.AcceptSDKParser;
+import net.authorize.acceptsdk.util.LogUtil;
 import org.json.JSONException;
 
 import static net.authorize.acceptsdk.parser.JSONConstants.ResultCode;
+import static net.authorize.acceptsdk.util.LogUtil.LOG_LEVEL;
 
 /**
  * Handling asynchronous task requests in
@@ -121,42 +126,44 @@ public class AcceptService extends IntentService {
          *   > If it is "Ok" that means transaction is successful.
          *   > If it is "Error" that means transaction is failed.
          */
+        String responseString = SDKUtils.convertStreamToString(urlConnection.getInputStream());
+        LogUtil.log(LOG_LEVEL.INFO, " response string :" + responseString);
+        String resultCode = AcceptSDKParser.getResultCodeFromResponse(responseString);
 
-        String resultCode =
-            AcceptSDKParser.getResultCodeFromResponseStream(urlConnection.getInputStream());
         if (resultCode.equals(ResultCode.OK)) {
           EncryptTransactionResponse result =
-              AcceptSDKParser.createEncryptionResponse(urlConnection.getInputStream());
+              AcceptSDKParser.createEncryptionResponse(responseString);
           resultObject = result;
         } else { //Error case
-          //SDKGatewayError error = SDKGatewayErrorMapping.getGatewayError(result.reasonCode);
-          //if (result.reasonCode.equals(REASON_CODE_MISSING_FIELD)) {
-          //  error.setErrorExtraMessage(result.missingField);
-          //} else {
-          //  error.setErrorExtraMessage(result.icsMessage.icsRmsg);
-          //}
-          //resultObject = error;
+          AcceptGatewayError error = SDKGatewayErrorMapping.getGatewayError(result.reasonCode);
+          if (result.reasonCode.equals(REASON_CODE_MISSING_FIELD)) {
+            error.setErrorExtraMessage(result.missingField);
+          } else {
+            error.setErrorExtraMessage(result.icsMessage.icsRmsg);
+          }
+          resultObject = error;
         }
       } else if (responseCode == HttpsURLConnection.HTTP_INTERNAL_ERROR) {
-        // SDKError error = envelope.parseGatewayError(urlConnection.getErrorStream());
-        // resultObject = error;
+        //TODO: Need to implement this
+        AcceptError error = AcceptSDKParser.createErrorResponse(urlConnection.getErrorStream());
+         resultObject = error;
       } else {
-        //  SDKError error = SDKInternalError.SDK_INTERNAL_ERROR_NETWORK_CONNECTION;
-        //   error.setErrorExtraMessage(String.valueOf(responseCode));
-        //   resultObject = error;
+        AcceptError error = AcceptInternalError.SDK_INTERNAL_ERROR_NETWORK_CONNECTION;
+        error.setErrorExtraMessage(String.valueOf(responseCode));
+        resultObject = error;
       }
     } catch (SocketTimeoutException e) {
       e.printStackTrace();
-      //SDKError error = SDKInternalError.SDK_INTERNAL_ERROR_NETWORK_CONNECTION_TIMEOUT;
-      //  error.setErrorExtraMessage(e.getMessage());
-      //  resultObject = error;
+      AcceptError error = AcceptInternalError.SDK_INTERNAL_ERROR_NETWORK_CONNECTION_TIMEOUT;
+      error.setErrorExtraMessage(e.getMessage());
+      resultObject = error;
     } catch (IOException e) {
       e.printStackTrace();
-      // SDKError error = SDKInternalError.SDK_INTERNAL_ERROR_NETWORK_CONNECTION;
-      // error.setErrorExtraMessage(e.getMessage());
-      // resultObject = error;
+       AcceptError error = AcceptInternalError.SDK_INTERNAL_ERROR_NETWORK_CONNECTION;
+       error.setErrorExtraMessage(e.getMessage());
+       resultObject = error;
     } catch (JSONException e) {
-
+      e.printStackTrace();
     }
     return resultObject;
   }
