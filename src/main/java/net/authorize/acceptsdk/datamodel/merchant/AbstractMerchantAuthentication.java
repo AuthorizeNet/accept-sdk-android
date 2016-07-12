@@ -7,20 +7,16 @@ import java.io.Serializable;
  * kbollepa@visa.com
  */
 public class AbstractMerchantAuthentication implements Serializable {
-    private static final long serialVersionUID = 2L;
+  private static final long serialVersionUID = 2L;
 
-    protected String mApiLoginID;
-    protected MerchantAuthenticationType merchantAuthenticationType;
+  protected String mApiLoginID;
+  protected MerchantAuthenticationType merchantAuthenticationType;
 
+  public MerchantAuthenticationType getMerchantAuthenticationType() {
+    return this.merchantAuthenticationType;
+  }
 
-    public MerchantAuthenticationType getMerchantAuthenticationType() {
-        return this.merchantAuthenticationType;
-    }
-
-
-    public String getApiLoginID() {
-        return this.mApiLoginID;
-    }
-
-
+  public String getApiLoginID() {
+    return this.mApiLoginID;
+  }
 }

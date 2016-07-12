@@ -7,9 +7,9 @@ import java.io.Serializable;
  * <ul>
  * <li>SDK_TRANSACTION_ENCRYPTION</li>
  * </ul>
- * 
+ *
  * @author
  */
-public enum TransactionType  implements Serializable{
-    SDK_TRANSACTION_ENCRYPTION
+public enum TransactionType implements Serializable {
+  SDK_TRANSACTION_ENCRYPTION
 }
