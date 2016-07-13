@@ -16,8 +16,6 @@ public class EncryptTransactionResponse extends TransactionResponse implements P
   private String mDataDescriptor;
   private String mDataValue;
 
-  // private ResponseReasonCode mReasonCode;
-
   public EncryptTransactionResponse() {
     super();
   }
@@ -38,27 +36,12 @@ public class EncryptTransactionResponse extends TransactionResponse implements P
     this.mDataValue = mDataValue;
   }
 
-  public static EncryptTransactionResponse createEncryptionResponse(InputStream inputStream)
-      throws IOException {
-    JsonReader reader = new JsonReader(new InputStreamReader(inputStream, "UTF-8"));
-    reader.beginObject();
-    while (reader.hasNext()) {
-      String name = reader.nextName();
-      if (name.equals("opaqueData")) {
-
-      }
-    }
-
-    return null;
-  }
 
   @Override public int describeContents() {
     return 0;
   }
 
-  //public ResponseReasonCode getReasonCode() {
-  //  return mReasonCode;
-  //}
+
 
   private EncryptTransactionResponse(Parcel in) {
     //        this.decision = (SDKResponseDecision) in.readSerializable();

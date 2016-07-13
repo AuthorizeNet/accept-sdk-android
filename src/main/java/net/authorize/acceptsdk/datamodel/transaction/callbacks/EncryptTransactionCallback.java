@@ -1,5 +1,6 @@
 package net.authorize.acceptsdk.datamodel.transaction.callbacks;
 
+import net.authorize.acceptsdk.datamodel.error.AcceptError;
 import net.authorize.acceptsdk.datamodel.transaction.response.EncryptTransactionResponse;
 
 /**
@@ -15,7 +16,7 @@ public interface EncryptTransactionCallback {
    *
    * @param error
    */
-  //  public abstract void onErrorReceived(SDKError error);
+    public abstract void onErrorReceived(AcceptError error);
 
   /**
    * Called when transaction request completed.

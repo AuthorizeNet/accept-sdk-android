@@ -3,6 +3,7 @@ package net.authorize.acceptsdk.internal;
 import android.os.Bundle;
 import android.os.Handler;
 import net.authorize.acceptsdk.AcceptSDKApiClient;
+import net.authorize.acceptsdk.datamodel.error.AcceptError;
 import net.authorize.acceptsdk.datamodel.transaction.EncryptTransactionObject;
 import net.authorize.acceptsdk.datamodel.transaction.callbacks.EncryptTransactionCallback;
 import net.authorize.acceptsdk.datamodel.transaction.response.EncryptTransactionResponse;
@@ -59,10 +60,9 @@ public class AcceptSDKCore implements TransactionResultReceiver.Receiver {
         mEncryptTransactionCallback.onEncryptionFinished(response);
         break;
       case AcceptService.SERVICE_RESULT_CODE_SDK_ERROR:
-        //TODO : Need to add code
-        //                SDKError error = (SDKError) resultData
-        //                        .getSerializable(AcceptService.SERVICE_RESULT_ERROR_KEY);
-        //                mEncryptTransactionCallback.onErrorReceived(error);
+        AcceptError error =
+            (AcceptError) resultData.getSerializable(AcceptService.SERVICE_RESULT_ERROR_KEY);
+        mEncryptTransactionCallback.onErrorReceived(error);
         break;
     }
   }

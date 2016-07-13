@@ -1,4 +1,4 @@
-package net.authorize.acceptsdk.common.error;
+package net.authorize.acceptsdk.datamodel.error;
 
 import java.io.Serializable;
 
@@ -9,7 +9,7 @@ public interface AcceptError extends Serializable {
   /**
    * @return a unique code related to this error
    */
-  public abstract int getErrorCode();
+  public abstract String getErrorCode();
 
   /**
    * @return a standard message describing the source of the error

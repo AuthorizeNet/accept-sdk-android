@@ -1,4 +1,4 @@
-package net.authorize.acceptsdk.common.error;
+package net.authorize.acceptsdk.datamodel.error;
 
 /**
  * Describes all error types.

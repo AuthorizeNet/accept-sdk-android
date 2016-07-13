@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import net.authorize.acceptsdk.common.error.AcceptError;
+import net.authorize.acceptsdk.datamodel.error.AcceptError;
 import net.authorize.acceptsdk.datamodel.common.Message;
 import net.authorize.acceptsdk.datamodel.common.ResponseMessages;
 import net.authorize.acceptsdk.datamodel.merchant.ClientKeyBasedMerchantAuthentication;
@@ -15,6 +15,7 @@ import net.authorize.acceptsdk.datamodel.merchant.MerchantAuthenticationType;
 import net.authorize.acceptsdk.datamodel.transaction.CardData;
 import net.authorize.acceptsdk.datamodel.transaction.EncryptTransactionObject;
 import net.authorize.acceptsdk.datamodel.transaction.response.EncryptTransactionResponse;
+import net.authorize.acceptsdk.datamodel.transaction.response.TransactionResponse;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -86,8 +87,6 @@ public class AcceptSDKParser {
     return request.toString();
   }
 
-
-
   public static String getResultCodeFromResponse(String jsonString) throws JSONException {
     String resultCode;
     JSONObject responseObject = (JSONObject) new JSONTokener(jsonString).nextValue();
@@ -96,7 +95,7 @@ public class AcceptSDKParser {
     return resultCode;
   }
 
-  public static EncryptTransactionResponse createEncryptionResponse(String json)
+  public static TransactionResponse parseEncryptionTransactionResponse(String json)
       throws JSONException {
    /*
     //COMMENT: Sample Json section
@@ -118,20 +117,30 @@ public class AcceptSDKParser {
    }
    */
 
-    EncryptTransactionResponse response = new EncryptTransactionResponse();
     JSONObject responseObject = (JSONObject) new JSONTokener(json).nextValue();
-    parseOpaqueSection(response, responseObject.getJSONObject(OPAQUE_DATA));
-    response.setResponseMessages(parseResponseMessagesSection(responseObject.getJSONObject(MESSAGES_LIST)));
-    return response;
+    if (responseObject.has(OPAQUE_DATA)) {
+      EncryptTransactionResponse encryptTransactionResponse = new EncryptTransactionResponse();
+      parseOpaqueSection(encryptTransactionResponse, responseObject.getJSONObject(OPAQUE_DATA));
+      encryptTransactionResponse.setResponseMessages(
+          parseResponseMessagesSection(responseObject.getJSONObject(MESSAGES_LIST)));
+      return encryptTransactionResponse;
+    } else {
+      TransactionResponse response = new TransactionResponse();
+      response.setResponseMessages(
+          parseResponseMessagesSection(responseObject.getJSONObject(MESSAGES_LIST)));
+      return response;
+    }
+
   }
 
-  public static AcceptError createErrorResponse(String jsonString) throws JSONException{
+  public static AcceptError createErrorResponse(String jsonString) throws JSONException {
     JSONObject jsonObject = (JSONObject) new JSONTokener(jsonString).nextValue();
-    ResponseMessages errorResponse = parseResponseMessagesSection(jsonObject.getJSONObject(MESSAGES_LIST));
+    ResponseMessages errorResponse =
+        parseResponseMessagesSection(jsonObject.getJSONObject(MESSAGES_LIST));
     return null;
   }
 
-  public static AcceptError createErrorResponse(InputStream errorStream) throws IOException{
+  public static AcceptError createErrorResponse(InputStream errorStream) throws IOException {
 
     return null;
   }
@@ -150,8 +159,8 @@ public class AcceptSDKParser {
     response.setDataValue(json.getString(DATA_VALUE));
   }
 
-  private static ResponseMessages parseResponseMessagesSection(
-      JSONObject json) throws JSONException {
+  private static ResponseMessages parseResponseMessagesSection(JSONObject json)
+      throws JSONException {
      /*
     //COMMENT: Sample Json section
      "messages": {
@@ -168,10 +177,10 @@ public class AcceptSDKParser {
     ResponseMessages responseMessages = new ResponseMessages();
     responseMessages.setResultCode(json.getString(RESULT_CODE));
     responseMessages.setMessageList(parseMessagesList(json.getJSONArray(MESSAGE)));
-   return responseMessages;
+    return responseMessages;
   }
 
-  private static List<Message> parseMessagesList(JSONArray jsonArray) throws JSONException{
+  private static List<Message> parseMessagesList(JSONArray jsonArray) throws JSONException {
     int arrayLength = jsonArray.length();
     List<Message> messageList = new ArrayList<Message>(arrayLength);
     for (int index = 0; index < arrayLength; index++) {
@@ -188,7 +197,6 @@ public class AcceptSDKParser {
   }
 
   /*  Code to parse json from input stream */
-
 
   public static String getResultCodeFromResponseStream(InputStream inputStream) throws IOException {
     String resultCode = ResultCode.ERROR;
