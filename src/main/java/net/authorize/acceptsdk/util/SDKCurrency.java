@@ -1,4 +1,4 @@
-package net.authorize.acceptsdk;
+package net.authorize.acceptsdk.util;
 
 /**
  * Enumeration describing available currencies:

@@ -1,7 +1,7 @@
 package net.authorize.acceptsdk.datamodel.transaction;
 
 import java.io.Serializable;
-import net.authorize.acceptsdk.AcceptInvalidCardException;
+import net.authorize.acceptsdk.exception.AcceptInvalidCardException;
 import net.authorize.acceptsdk.ValidationManager;
 
 /**

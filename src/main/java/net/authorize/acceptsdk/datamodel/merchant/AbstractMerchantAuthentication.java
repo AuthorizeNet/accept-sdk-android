@@ -3,6 +3,7 @@ package net.authorize.acceptsdk.datamodel.merchant;
 import java.io.Serializable;
 
 /**
+ * A common class used to represent Merchant Authentication.
  * Created by Kiran Bollepalli on 08,July,2016.
  * kbollepa@visa.com
  */

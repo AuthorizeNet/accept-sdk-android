@@ -1,6 +1,8 @@
 package net.authorize.acceptsdk.parser;
 
 /**
+ * Describes all Json strings, which are used in API's.
+ *
  * Created by Kiran Bollepalli on 12,July,2016.
  * kbollepa@visa.com
  */

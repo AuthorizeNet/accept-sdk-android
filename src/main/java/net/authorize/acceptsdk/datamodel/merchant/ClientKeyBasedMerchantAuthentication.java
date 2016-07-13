@@ -1,7 +1,10 @@
 package net.authorize.acceptsdk.datamodel.merchant;
 
+import net.authorize.acceptsdk.exception.AcceptInvalidCardException;
+import net.authorize.acceptsdk.exception.AcceptSDKException;
+
 /**
- * Client key authenticator.
+ * ClientKey based Merchant Authentication
  */
 public class ClientKeyBasedMerchantAuthentication extends AbstractMerchantAuthentication {
 
@@ -14,10 +17,13 @@ public class ClientKeyBasedMerchantAuthentication extends AbstractMerchantAuthen
    * Creates a client key authenticator.
    *
    * @return ClientKeyBasedMerchantAuthentication container
+   * @throws AcceptSDKException,  If apiLogin ID or client key is null.
    */
   public static ClientKeyBasedMerchantAuthentication createMerchantAuthentication(String loginId,
-      String clientKey) {
-
+      String clientKey) throws AcceptSDKException {
+    if (loginId == null || clientKey == null) {
+      throw new AcceptSDKException( AcceptSDKException.NULL_APIKEY_CLIENT_KEY);
+    }
     ClientKeyBasedMerchantAuthentication authenticator = new ClientKeyBasedMerchantAuthentication();
     authenticator.mApiLoginID = loginId;
     authenticator.mClientKey = clientKey;
@@ -30,7 +36,4 @@ public class ClientKeyBasedMerchantAuthentication extends AbstractMerchantAuthen
     return mClientKey;
   }
 
-  public void setClientKey(String clientKey) {
-    mClientKey = clientKey;
-  }
 }

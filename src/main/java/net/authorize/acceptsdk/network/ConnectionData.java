@@ -1,6 +1,8 @@
 package net.authorize.acceptsdk.network;
 
 /**
+ * Class contains constants and methods related to Network connection.
+ *
  * Created by Kiran Bollepalli on 08,July,2016.
  * kbollepa@visa.com
  */
@@ -9,10 +11,6 @@ public class ConnectionData {
   public static final String ENDPOINT_SANDBOX = "https://apitest.authorize.net/xml/v1/request.api ";
   public static final String ENDPOINT_PRODUCTION = "https://api.authorize.net/xml/v1/request.api ";
 
-  /**
-   * Soap action to use if none is specified.
-   */
-  public static final String BLANK_SOAP_ACTION = "";
   /**
    * Port for HTTPS communication.
    */
@@ -29,10 +27,7 @@ public class ConnectionData {
    * Name of HTTP.
    */
   public static final String HTTP_NAME = "http";
-  /**
-   * HTTP content type submitted in HTTP POST request for SOAP calls.
-   */
-  public static final String XML_CONTENT_TYPE_PREFIX = "text/xml; charset=";
+
   /**
    * Label for content-type header.
    */
@@ -41,21 +36,18 @@ public class ConnectionData {
    * Value for COntent-type header = application/json.
    */
   public static final String CONTENT_TYPE_APPLICATION_JSON = "application/json";
-  /**
-   * Key for SOAP action header.
-   */
-  public static final String HEADER_KEY_SOAP_ACTION = "SOAPAction";
+
   /**
    * Timeout for making a connection.
    */
   public static final int DEFAULT_CONN_TIMEOUT = 5000;
   /**
-   * Timeout for recieving data.
+   * Timeout for receiving data.
    */
   public static final int DEFAULT_SOCKET_TIMEOUT = 20000;
 
   /**
-   * SOAP Payments CURRENT endpoint address.
+   * API current endpoint address.
    */
   private static String sActiveEndPointUrl;
 

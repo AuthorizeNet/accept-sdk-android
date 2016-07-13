@@ -4,6 +4,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 
+/**
+ * Result Receiver for {@link AcceptService}
+ */
 public class TransactionResultReceiver extends ResultReceiver {
 
   private Receiver mReceiver;

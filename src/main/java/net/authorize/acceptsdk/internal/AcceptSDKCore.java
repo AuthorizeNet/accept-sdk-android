@@ -11,11 +11,13 @@ import net.authorize.acceptsdk.network.AcceptService;
 import net.authorize.acceptsdk.network.TransactionResultReceiver;
 
 /**
+ * Core class has implementation of API's.
  * Created by Kiran Bollepalli on 07,July,2016.
  * kbollepa@visa.com
  */
 public class AcceptSDKCore implements TransactionResultReceiver.Receiver {
 
+  //COMMENT: Single instance
   private static AcceptSDKCore sInstance = new AcceptSDKCore();
 
   /** Flag to indicate that a transaction is in progress. */
@@ -27,10 +29,19 @@ public class AcceptSDKCore implements TransactionResultReceiver.Receiver {
 
   }
 
+  /**
+   * Method returns AcceptSDKCore object.
+   * @return AcceptSDKCore
+   */
   public static AcceptSDKCore getInstance() {
     return sInstance;
   }
 
+  /**
+   * @param transactionObject encryption transaction object.
+   * @param callback callback for response of transaction
+   * @return boolean, false if another transaction is already in progress.
+   */
   public boolean performEncryption(EncryptTransactionObject transactionObject,
       EncryptTransactionCallback callback) {
     if (sTransactionInProgress) return sTransactionInProgress;

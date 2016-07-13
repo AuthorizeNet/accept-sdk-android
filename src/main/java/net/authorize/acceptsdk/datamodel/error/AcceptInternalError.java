@@ -1,8 +1,10 @@
 package net.authorize.acceptsdk.datamodel.error;
 
+/**
+ * Describes all error types, which can occurs due to network or validation of parameters.
+ */
 public enum AcceptInternalError implements AcceptError {
-  SDK_INTERNAL_ERROR_TRANSACTION_IN_PROGRESS("1001",
-      "Another transaction is already in progress. Cancel/terminate previous transaction first."),
+  SDK_INTERNAL_ERROR_TRANSACTION_IN_PROGRESS("1001", "Another transaction is already in progress."),
   SDK_INTERNAL_ERROR_PARSING("1002", "Cannot contact the server."),
   SDK_INTERNAL_ERROR_NETWORK_CONNECTION("1003", "Cannot access the network."),
   SDK_INTERNAL_ERROR_NETWORK_CONNECTION_TIMEOUT("1004", "Network connection timed out."),

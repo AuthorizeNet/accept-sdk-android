@@ -4,6 +4,8 @@ import net.authorize.acceptsdk.datamodel.error.AcceptError;
 import net.authorize.acceptsdk.datamodel.transaction.response.EncryptTransactionResponse;
 
 /**
+ * Callback Interface for Encrypt Transaction
+ *
  * Created by Kiran Bollepalli on 07,July,2016.
  * kbollepa@visa.com
  */

@@ -21,6 +21,7 @@ import net.authorize.acceptsdk.datamodel.transaction.response.EncryptTransaction
 import net.authorize.acceptsdk.datamodel.transaction.response.TransactionResponse;
 import net.authorize.acceptsdk.parser.AcceptSDKParser;
 import net.authorize.acceptsdk.util.LogUtil;
+import net.authorize.acceptsdk.util.SDKUtils;
 import org.json.JSONException;
 
 import static net.authorize.acceptsdk.parser.JSONConstants.ResultCode;
@@ -36,16 +37,6 @@ import static net.authorize.acceptsdk.util.LogUtil.LOG_LEVEL;
  */
 public class AcceptService extends IntentService {
 
-  /** Reason code: 100 */
-  private static String REASON_CODE_OK = "100";
-  /** Reason code: 120 */
-  private static String REASON_CODE_DISCOUNTED_OK = "120";
-  /** Reason code: 101 */
-  private static String REASON_CODE_MISSING_FIELD = "101";
-  /** Reason code: 102 */
-  private static String REASON_CODE_INVALID_FIELD = "102";
-  /** Reason code: 110 */
-  private static String REASON_CODE_PARTIAL = "110";
   private final static String POST = "POST";
 
   public static final String ACTION_ENCRYPT = "net.authorize.action.ENCRYPT";
@@ -60,7 +51,7 @@ public class AcceptService extends IntentService {
   public static final int SERVICE_RESULT_CODE_SDK_ERROR = 200;
 
   /**
-   * Starts this service to perform action CONNECT with the given parameters. If
+   * Starts this service to perform action ENCRYPT with the given parameters. If
    * the service is already performing a task this action will be queued.
    *
    * @param transactionObject - Envelope that will be send to Gateway
@@ -101,7 +92,7 @@ public class AcceptService extends IntentService {
   }
 
   /**
-   * Handle action Foo in the provided background thread with the provided
+   * Handles action Encrypt in the provided background thread with the provided
    * parameters.
    */
   private Object handleActionEncrypt(EncryptTransactionObject transactionObject) {
@@ -128,8 +119,7 @@ public class AcceptService extends IntentService {
         String responseString = SDKUtils.convertStreamToString(urlConnection.getInputStream());
         LogUtil.log(LOG_LEVEL.INFO, " response string :" + responseString);
         TransactionResponse response =
-            AcceptSDKParser.parseEncryptionTransactionResponse(responseString);
-        //   String resultCode = AcceptSDKParser.getResultCodeFromResponse(responseString);
+            AcceptSDKParser.createEncryptionTransactionResponse(responseString);
          /* COMMENT: Check Result code.
          *   > If it is "Ok" that means transaction is successful.
          *   > If it is "Error" that means transaction is failed.
@@ -137,7 +127,6 @@ public class AcceptService extends IntentService {
         if (response.getResultCode().equals(ResultCode.OK)) {
           resultObject = (EncryptTransactionResponse) response;
         } else { //Error case
-
           Message errorMessage = response.getFirstMessage();
           //TODO: Need to add error messages to AcceptEncryptError
           AcceptError error =
@@ -164,10 +153,10 @@ public class AcceptService extends IntentService {
       error.setErrorExtraMessage(e.getMessage());
       resultObject = error;
     } catch (JSONException e) {
+      e.printStackTrace();
       AcceptError error = AcceptInternalError.SDK_INTERNAL_ERROR_PARSING;
       error.setErrorExtraMessage(e.getMessage());
       resultObject = error;
-      e.printStackTrace();
     }
     return resultObject;
   }

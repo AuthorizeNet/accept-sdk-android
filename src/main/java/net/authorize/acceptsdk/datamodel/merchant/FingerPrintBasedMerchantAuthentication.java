@@ -1,7 +1,9 @@
 package net.authorize.acceptsdk.datamodel.merchant;
 
+import net.authorize.acceptsdk.exception.AcceptSDKException;
+
 /**
- * Client key authenticator.
+ * Fingerprint based Merchant Authentication.
  */
 public class FingerPrintBasedMerchantAuthentication extends AbstractMerchantAuthentication {
 
@@ -14,10 +16,13 @@ public class FingerPrintBasedMerchantAuthentication extends AbstractMerchantAuth
    * Creates a client key authenticator.
    *
    * @return FingerPrintBasedMerchantAuthentication container
+   * @throws AcceptSDKException, If apiLogin ID or fingerprint is null.
    */
   public static FingerPrintBasedMerchantAuthentication createMerchantAuthentication(String loginId,
-      FingerPrintData fingerPrintData) {
-
+      FingerPrintData fingerPrintData) throws AcceptSDKException {
+    if (loginId == null || fingerPrintData == null) {
+      throw new AcceptSDKException(AcceptSDKException.NULL_APIKEY_FINGER_PRINT);
+    }
     FingerPrintBasedMerchantAuthentication authenticator =
         new FingerPrintBasedMerchantAuthentication();
     authenticator.mApiLoginID = loginId;

@@ -3,6 +3,8 @@ package net.authorize.acceptsdk.util;
 import android.util.Log;
 
 /**
+ * Utility class for Logging.
+ *
  * Created by Kiran Bollepalli on 12,July,2016.
  * kbollepa@visa.com
  */

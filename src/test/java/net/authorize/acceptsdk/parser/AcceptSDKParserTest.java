@@ -1,7 +1,7 @@
 package net.authorize.acceptsdk.parser;
 
 import android.util.Log;
-import net.authorize.acceptsdk.AcceptInvalidCardException;
+import net.authorize.acceptsdk.exception.AcceptInvalidCardException;
 import net.authorize.acceptsdk.datamodel.merchant.ClientKeyBasedMerchantAuthentication;
 import net.authorize.acceptsdk.datamodel.transaction.CardData;
 import net.authorize.acceptsdk.datamodel.transaction.EncryptTransactionObject;

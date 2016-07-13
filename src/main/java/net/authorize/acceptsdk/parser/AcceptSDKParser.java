@@ -1,21 +1,23 @@
 package net.authorize.acceptsdk.parser;
 
-import android.util.JsonReader;
-import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import net.authorize.acceptsdk.datamodel.error.AcceptError;
 import net.authorize.acceptsdk.datamodel.common.Message;
 import net.authorize.acceptsdk.datamodel.common.ResponseMessages;
+import net.authorize.acceptsdk.datamodel.error.AcceptError;
+import net.authorize.acceptsdk.datamodel.error.AcceptInternalError;
 import net.authorize.acceptsdk.datamodel.merchant.ClientKeyBasedMerchantAuthentication;
 import net.authorize.acceptsdk.datamodel.merchant.MerchantAuthenticationType;
 import net.authorize.acceptsdk.datamodel.transaction.CardData;
 import net.authorize.acceptsdk.datamodel.transaction.EncryptTransactionObject;
 import net.authorize.acceptsdk.datamodel.transaction.response.EncryptTransactionResponse;
 import net.authorize.acceptsdk.datamodel.transaction.response.TransactionResponse;
+import net.authorize.acceptsdk.util.LogUtil;
+import net.authorize.acceptsdk.util.LogUtil.LOG_LEVEL;
+
+import net.authorize.acceptsdk.util.SDKUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,23 +37,29 @@ import static net.authorize.acceptsdk.parser.JSONConstants.MESSAGE_CODE;
 import static net.authorize.acceptsdk.parser.JSONConstants.MESSAGE_TEXT;
 import static net.authorize.acceptsdk.parser.JSONConstants.OPAQUE_DATA;
 import static net.authorize.acceptsdk.parser.JSONConstants.RESULT_CODE;
-import static net.authorize.acceptsdk.parser.JSONConstants.ResultCode;
 import static net.authorize.acceptsdk.parser.JSONConstants.TOKEN;
 import static net.authorize.acceptsdk.parser.JSONConstants.TYPE;
 import static net.authorize.acceptsdk.parser.JSONConstants.TYPE_VALUE_TOKEN;
 
 /**
+ * This is utility class for Json Parsing.It creates Json and parse Json.
+ *
  * Created by Kiran Bollepalli on 08,July,2016.
  * kbollepa@visa.com
  */
 public class AcceptSDKParser {
 
-  private static final String LOG_TAG = "AcceptSDKParser";
-
+  /**
+   * Method create Json Object for Encryption API call.
+   *
+   * @param transactionObject encryption transaction Object. Also see {@link
+   * EncryptTransactionObject}
+   * @throws JSONException
+   */
   public static String getJsonFromEncryptTransaction(EncryptTransactionObject transactionObject)
       throws JSONException {
 
-    // Json related to data
+    // Json related to card data
     JSONObject tokenData = new JSONObject();
     CardData cardData = transactionObject.getCardData();
     tokenData.put(Card.CARD_NUMBER, cardData.getAccountNumber());
@@ -87,15 +95,16 @@ public class AcceptSDKParser {
     return request.toString();
   }
 
-  public static String getResultCodeFromResponse(String jsonString) throws JSONException {
-    String resultCode;
-    JSONObject responseObject = (JSONObject) new JSONTokener(jsonString).nextValue();
-    resultCode = responseObject.getJSONObject(MESSAGES_LIST).getString(RESULT_CODE);
-    Log.i(LOG_TAG, "Result code " + resultCode);
-    return resultCode;
-  }
-
-  public static TransactionResponse parseEncryptionTransactionResponse(String json)
+  /**
+   * Method parses Json response and creates Transaction Response Object.
+   * If transaction is successful, It creates {@link EncryptTransactionResponse} object.
+   * If transaction is unsuccessful, it creates {@link TransactionResponse} Object which contains
+   * error messages.
+   *
+   * @return TransactionResponse
+   * @throws JSONException
+   */
+  public static TransactionResponse createEncryptionTransactionResponse(String json)
       throws JSONException {
    /*
     //COMMENT: Sample Json section
@@ -130,19 +139,24 @@ public class AcceptSDKParser {
           parseResponseMessagesSection(responseObject.getJSONObject(MESSAGES_LIST)));
       return response;
     }
-
   }
 
-  public static AcceptError createErrorResponse(String jsonString) throws JSONException {
-    JSONObject jsonObject = (JSONObject) new JSONTokener(jsonString).nextValue();
-    ResponseMessages errorResponse =
-        parseResponseMessagesSection(jsonObject.getJSONObject(MESSAGES_LIST));
-    return null;
-  }
 
+
+  /**
+   * Creates AcceptError Object from error stream.
+   * @param errorStream
+   * @return {@link AcceptError}
+   * @throws IOException
+   */
+  //TODO: Need to implement this
   public static AcceptError createErrorResponse(InputStream errorStream) throws IOException {
-
-    return null;
+    AcceptError error = AcceptInternalError.SDK_INTERNAL_ERROR_SERVER;
+    String errorString = SDKUtils.convertStreamToString(errorStream);
+    LogUtil.log(LOG_LEVEL.INFO, errorString);
+    // FIXME: Need to parse response and set "setErrorExtraMessage" to AcceptError
+    // error.setErrorExtraMessage(extraMessage);
+    return error;
   }
 
   private static void parseOpaqueSection(EncryptTransactionResponse response, JSONObject json)
@@ -193,189 +207,6 @@ public class AcceptSDKParser {
     Message message = new Message();
     message.setMessageCode(json.getString(MESSAGE_CODE));
     message.setMessageText(json.getString(MESSAGE_TEXT));
-    return message;
-  }
-
-  /*  Code to parse json from input stream */
-
-  public static String getResultCodeFromResponseStream(InputStream inputStream) throws IOException {
-    String resultCode = ResultCode.ERROR;
-    JsonReader reader = new JsonReader(new InputStreamReader(inputStream, "UTF-8"));
-    reader.beginObject();
-    while (reader.hasNext()) {
-      String name = reader.nextName();
-      if (name.equals(MESSAGES_LIST)) {
-        resultCode = getResultCode(reader);
-      } else {
-        reader.skipValue();
-      }
-    }
-    reader.endObject();
-
-    return resultCode;
-  }
-
-  private static String getResultCode(JsonReader reader) throws IOException {
-    String resultCode = ResultCode.ERROR;
-    reader.beginObject();
-
-    while (reader.hasNext()) {
-      String name = reader.nextName();
-      if (name.equals(RESULT_CODE)) {
-        resultCode = reader.nextString();
-      } else {
-        reader.skipValue();
-      }
-    }
-    reader.endObject();
-    Log.i(LOG_TAG, "Result code " + resultCode);
-
-    return resultCode;
-  }
-
-  public static EncryptTransactionResponse createEncryptionResponse(InputStream inputStream)
-      throws IOException {
-  /*
-    //COMMENT: Sample Json section
-
-   {
-      "opaqueData": {
-        "dataDescriptor": "COMMON.ACCEPT.INAPP.PAYMENT",
-        "dataValue": "9468313632506051305001"
-      },
-      "messages": {
-        "resultCode": "Ok",
-        "message": [
-          {
-            "code": "I00001",
-            "text": "Successful."
-          }
-        ]
-      }
-   }
-   */
-
-    EncryptTransactionResponse response = new EncryptTransactionResponse();
-
-    JsonReader reader = new JsonReader(new InputStreamReader(inputStream, "UTF-8"));
-    reader.beginObject();
-    while (reader.hasNext()) {
-      String name = reader.nextName();
-      if (name.equals(OPAQUE_DATA)) {
-        parseOpaqueSection(response, reader);
-      } else if (name.equals(MESSAGES_LIST)) {
-        parseResponseMessagesSection(response, reader);
-      } else {
-        reader.skipValue();
-      }
-    }
-    reader.endObject();
-
-    return response;
-  }
-
-  /**
-   * parse Opaque section of response
-   *
-   * @throws IOException
-   */
-  private static void parseOpaqueSection(EncryptTransactionResponse response, JsonReader reader)
-      throws IOException {
-    /*
-    //COMMENT: Sample Json section
-
-    "opaqueData": {
-        "dataDescriptor": "COMMON.ACCEPT.INAPP.PAYMENT",
-        "dataValue": "9468313632506051305001"
-     }
-     */
-    reader.beginObject();
-
-    while (reader.hasNext()) {
-      String name = reader.nextName();
-      if (name.equals(DATA_DESCRIPTOR)) {
-        response.setDataDescriptor(reader.nextString());
-      } else if (name.equals(DATA_VALUE)) {
-        response.setDataValue(reader.nextString());
-      } else {
-        reader.skipValue();
-      }
-    }
-    reader.endObject();
-    Log.i(LOG_TAG, "encypted code " + response.getDataValue());
-  }
-
-  private static void parseResponseMessagesSection(EncryptTransactionResponse response,
-      JsonReader reader) throws IOException {
-    /*
-    //COMMENT: Sample Json section
-     "messages": {
-          "resultCode": "Ok",
-          "message": [
-              {
-                "code": "I00001",
-                "text": "Successful."
-              }
-           ]
-        }
-    */
-    ResponseMessages responseMessages = new ResponseMessages();
-    reader.beginObject();
-
-    while (reader.hasNext()) {
-      String name = reader.nextName();
-      if (name.equals(RESULT_CODE)) {
-        responseMessages.setResultCode(reader.nextString());
-      } else if (name.equals(MESSAGES_LIST)) {
-        responseMessages.setMessageList(parseMessagesList(reader));
-      } else {
-        reader.skipValue();
-      }
-    }
-    reader.endObject();
-
-    response.setResponseMessages(responseMessages);
-    Log.i(LOG_TAG, "responseMessages result code " + responseMessages.getResultCode());
-  }
-
-  private static List<Message> parseMessagesList(JsonReader reader) throws IOException {
-    List<Message> messageList = new ArrayList<Message>();
-    reader.beginArray();
-    while (reader.hasNext()) {
-      messageList.add(parseMessage(reader));
-    }
-    reader.endArray();
-
-    Log.i(LOG_TAG, "Messages count " + messageList.size());
-
-    return messageList;
-  }
-
-  private static Message parseMessage(JsonReader reader) throws IOException {
-     /*
-    //COMMENT: Sample Json  section
-     {
-        "code": "I00001",
-        "text": "Successful."
-      }
-     */
-
-    Message message = new Message();
-    reader.beginObject();
-    while (reader.hasNext()) {
-      String name = reader.nextName();
-      if (name.equals(MESSAGE_CODE)) {
-        message.setMessageCode(reader.nextString());
-      }
-      if (name.equals(MESSAGE_TEXT)) {
-        message.setMessageCode(reader.nextString());
-      } else {
-        reader.skipValue();
-      }
-    }//End of while
-
-    reader.endObject();
-    Log.i(LOG_TAG, " Message : " + message.toString());
     return message;
   }
 }
