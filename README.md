@@ -1,4 +1,4 @@
-# Authorize.Net Accept Mobile SDK f
+# Authorize.Net Accept Mobile SDK for Android
 
 ## SDK Installation
 
