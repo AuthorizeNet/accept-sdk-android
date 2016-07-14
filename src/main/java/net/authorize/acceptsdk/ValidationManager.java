@@ -65,6 +65,12 @@ public class ValidationManager {
     int currentMonth =
         Calendar.getInstance().get(Calendar.MONTH) + 1; // since JANUARY = 0 for Calendar class
 
+    if (!month.matches("\\d+")) {
+      throw new AcceptInvalidCardException(AcceptInvalidCardException.INVALID_CARD_EXPIRATION_MONTH);
+    }
+    if (!year.matches("\\d+")) {
+      throw new AcceptInvalidCardException(AcceptInvalidCardException.INVALID_CARD_EXPIRATION_YEAR);
+    }
     if (month.length() != 2 || year.length() != 4) {
       throw new AcceptInvalidCardException(AcceptInvalidCardException.INVALID_CARD_DATE_FORMAT);
     }

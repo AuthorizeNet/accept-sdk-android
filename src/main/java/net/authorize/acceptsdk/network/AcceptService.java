@@ -131,6 +131,7 @@ public class AcceptService extends IntentService {
           //TODO: Need to add error messages to AcceptEncryptError
           AcceptError error =
               AcceptEncryptError.getEncryptErrorByErrorCode(errorMessage.getMessageCode());
+          error.setErrorExtraMessage(errorMessage.getMessageText());
           resultObject = error;
         }
       } else if (responseCode == HttpsURLConnection.HTTP_INTERNAL_ERROR) {

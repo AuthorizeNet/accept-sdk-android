@@ -6,6 +6,7 @@ import net.authorize.acceptsdk.datamodel.merchant.ClientKeyBasedMerchantAuthenti
 import net.authorize.acceptsdk.datamodel.transaction.CardData;
 import net.authorize.acceptsdk.datamodel.transaction.EncryptTransactionObject;
 import net.authorize.acceptsdk.datamodel.transaction.TransactionType;
+import net.authorize.acceptsdk.exception.AcceptSDKException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,7 +28,7 @@ public class AcceptSDKParserTest {
     transactionObject = prepareTransactionObject();
   }
 
-  private EncryptTransactionObject prepareTransactionObject() {
+  private EncryptTransactionObject prepareTransactionObject() throws AcceptSDKException {
     ClientKeyBasedMerchantAuthentication merchantAuthentication =
         ClientKeyBasedMerchantAuthentication.
             createMerchantAuthentication(API_LOGIN_ID, CLIENT_KEY);

@@ -13,7 +13,7 @@ public class CardData implements Serializable {
   private static final long serialVersionUID = 2L;
 
   //	required
-  private String accountNumber;
+  private String cardNumber;
   private String expirationMonth;
   private String expirationYear;
 
@@ -21,8 +21,8 @@ public class CardData implements Serializable {
    * Creates an instance of object to store keyed card data. Also it sets a
    */
   private CardData(Builder builder) throws AcceptInvalidCardException {
-    if (ValidationManager.isValidCardNumber(builder.accountNumber)) {
-      this.accountNumber = builder.accountNumber;
+    if (ValidationManager.isValidCardNumber(builder.cardNumber)) {
+      this.cardNumber = builder.cardNumber;
     }
 
     if (ValidationManager.isValidExpirationDate(builder.expirationMonth, builder.expirationYear)) {
@@ -31,12 +31,12 @@ public class CardData implements Serializable {
     }
   }
 
-  public String getAccountNumber() {
-    return accountNumber;
+  public String getCardNumber() {
+    return cardNumber;
   }
 
-  public void setAccountNumber(String accountNumber) {
-    this.accountNumber = accountNumber;
+  public void setCardNumber(String cardNumber) {
+    this.cardNumber = cardNumber;
   }
 
   public String getExpirationMonth() {
@@ -61,12 +61,12 @@ public class CardData implements Serializable {
 
   public static class Builder {
     //	required
-    private final String accountNumber;
+    private final String cardNumber;
     private final String expirationMonth;
     private final String expirationYear;
 
-    public Builder(String accountNumber, String expirationMonth, String expirationYear) {
-      this.accountNumber = accountNumber;
+    public Builder(String cardNumber, String expirationMonth, String expirationYear) {
+      this.cardNumber = cardNumber;
       this.expirationMonth = expirationMonth;
       this.expirationYear = expirationYear;
     }

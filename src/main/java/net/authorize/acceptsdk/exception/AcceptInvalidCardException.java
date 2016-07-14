@@ -2,7 +2,7 @@ package net.authorize.acceptsdk.exception;
 
 public class AcceptInvalidCardException extends AcceptSDKException {
 
-  private static final String INVALID_CARD_NUMBER = "Invalid Card Number";
+  public static final String INVALID_CARD_NUMBER = "Invalid Card Number";
 
   public static final String INVALID_CARD_DATE_FORMAT = "Invalid Card Date format";
   public static final String INVALID_CARD_EXPIRATION_MONTH = "Invalid Card Expiration Month";

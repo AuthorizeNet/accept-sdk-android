@@ -62,7 +62,7 @@ public class AcceptSDKParser {
     // Json related to card data
     JSONObject tokenData = new JSONObject();
     CardData cardData = transactionObject.getCardData();
-    tokenData.put(Card.CARD_NUMBER, cardData.getAccountNumber());
+    tokenData.put(Card.CARD_NUMBER, cardData.getCardNumber());
     tokenData.put(Card.EXPIRATION_DATE, cardData.getExpirationInFormatMMYYYY());
 
     JSONObject data = new JSONObject();

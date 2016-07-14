@@ -3,12 +3,13 @@ package net.authorize.acceptsdk.datamodel.transaction;
 import java.io.Serializable;
 import java.util.UUID;
 import net.authorize.acceptsdk.datamodel.merchant.AbstractMerchantAuthentication;
+import net.authorize.acceptsdk.exception.AcceptSDKException;
 
 /**
  * Created by Kiran Bollepalli on 07,July,2016.
  * kbollepa@visa.com
  */
-public class TransactionObject implements Serializable {
+public abstract class TransactionObject implements Serializable {
 
   private static final long serialVersionUID = 2L;
 
@@ -60,9 +61,12 @@ public class TransactionObject implements Serializable {
    *
    * @param type transaction type
    * @return one of transaction objects
+   * @throws AcceptSDKException, If Transaction type is null.
    */
-  public static TransactionObject.Builder createTransactionObject(TransactionType type) {
+  public static TransactionObject.Builder createTransactionObject(TransactionType type)
+      throws AcceptSDKException {
 
+    if (type == null) throw new AcceptSDKException(AcceptSDKException.TRANSACTION_TYPE_ERROR);
     switch (type) {
       case SDK_TRANSACTION_ENCRYPTION:
         return new EncryptTransactionObject.Builder();
