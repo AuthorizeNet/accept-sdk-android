@@ -3,10 +3,10 @@ package net.authorize.acceptsdk.internal;
 import android.os.Bundle;
 import android.os.Handler;
 import net.authorize.acceptsdk.AcceptSDKApiClient;
-import net.authorize.acceptsdk.datamodel.error.AcceptError;
 import net.authorize.acceptsdk.datamodel.transaction.EncryptTransactionObject;
 import net.authorize.acceptsdk.datamodel.transaction.callbacks.EncryptTransactionCallback;
 import net.authorize.acceptsdk.datamodel.transaction.response.EncryptTransactionResponse;
+import net.authorize.acceptsdk.datamodel.transaction.response.ErrorTransactionResponse;
 import net.authorize.acceptsdk.network.AcceptService;
 import net.authorize.acceptsdk.network.TransactionResultReceiver;
 
@@ -31,6 +31,7 @@ public class AcceptSDKCore implements TransactionResultReceiver.Receiver {
 
   /**
    * Method returns AcceptSDKCore object.
+   *
    * @return AcceptSDKCore
    */
   public static AcceptSDKCore getInstance() {
@@ -66,13 +67,13 @@ public class AcceptSDKCore implements TransactionResultReceiver.Receiver {
     sTransactionInProgress = false;
     switch (resultCode) {
       case AcceptService.SERVICE_RESULT_CODE_SDK_RESPONSE:
-        EncryptTransactionResponse response = (EncryptTransactionResponse) resultData.getParcelable(
-            AcceptService.SERVICE_RESULT_RESPONSE_KEY);
+        EncryptTransactionResponse response =
+            resultData.getParcelable(AcceptService.SERVICE_RESULT_RESPONSE_KEY);
         mEncryptTransactionCallback.onEncryptionFinished(response);
         break;
       case AcceptService.SERVICE_RESULT_CODE_SDK_ERROR:
-        AcceptError error =
-            (AcceptError) resultData.getSerializable(AcceptService.SERVICE_RESULT_ERROR_KEY);
+        ErrorTransactionResponse error =
+            resultData.getParcelable(AcceptService.SERVICE_RESULT_ERROR_KEY);
         mEncryptTransactionCallback.onErrorReceived(error);
         break;
     }

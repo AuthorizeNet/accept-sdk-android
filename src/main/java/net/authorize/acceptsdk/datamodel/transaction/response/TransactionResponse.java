@@ -39,16 +39,9 @@ public class TransactionResponse implements Parcelable {
     return responseMessages.getResultCode();
   }
 
-  public Message getFirstMessage() {
-    Message message = null;
-    if (responseMessages == null) return message;
-
-    List<Message> messageList = responseMessages.getMessageList();
-    if (messageList != null && messageList.size() > 0) message = messageList.get(0);
-
-    return message;
+  public List<Message> getErrorMessageList() {
+    return responseMessages.getMessageList();
   }
-
   // ---------- Code for Parcelable interface ----------
 
   public void readFromParcel(Parcel in) {

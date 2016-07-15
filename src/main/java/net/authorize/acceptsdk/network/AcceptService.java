@@ -12,12 +12,10 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.SocketTimeoutException;
 import javax.net.ssl.HttpsURLConnection;
-import net.authorize.acceptsdk.datamodel.common.Message;
-import net.authorize.acceptsdk.datamodel.error.AcceptEncryptError;
-import net.authorize.acceptsdk.datamodel.error.AcceptError;
-import net.authorize.acceptsdk.datamodel.error.AcceptInternalError;
+import net.authorize.acceptsdk.datamodel.error.SDKErrorCode;
 import net.authorize.acceptsdk.datamodel.transaction.EncryptTransactionObject;
 import net.authorize.acceptsdk.datamodel.transaction.response.EncryptTransactionResponse;
+import net.authorize.acceptsdk.datamodel.transaction.response.ErrorTransactionResponse;
 import net.authorize.acceptsdk.datamodel.transaction.response.TransactionResponse;
 import net.authorize.acceptsdk.parser.AcceptSDKParser;
 import net.authorize.acceptsdk.util.LogUtil;
@@ -114,7 +112,8 @@ public class AcceptService extends IntentService {
       os.close();
 
       int responseCode = urlConnection.getResponseCode();
-      if (responseCode == HttpsURLConnection.HTTP_OK) {
+      if (responseCode == HttpsURLConnection.HTTP_OK
+          || responseCode == HttpsURLConnection.HTTP_CREATED) {
 
         String responseString = SDKUtils.convertStreamToString(urlConnection.getInputStream());
         LogUtil.log(LOG_LEVEL.INFO, " response string :" + responseString);
@@ -127,37 +126,27 @@ public class AcceptService extends IntentService {
         if (response.getResultCode().equals(ResultCode.OK)) {
           resultObject = (EncryptTransactionResponse) response;
         } else { //Error case
-          Message errorMessage = response.getFirstMessage();
-          //TODO: Need to add error messages to AcceptEncryptError
-          AcceptError error =
-              AcceptEncryptError.getEncryptErrorByErrorCode(errorMessage.getMessageCode());
-          error.setErrorExtraMessage(errorMessage.getMessageText());
-          resultObject = error;
+          resultObject = (ErrorTransactionResponse) response;
         }
       } else if (responseCode == HttpsURLConnection.HTTP_INTERNAL_ERROR) {
-        //TODO: Need to implement this
-        AcceptError error = AcceptSDKParser.createErrorResponse(urlConnection.getErrorStream());
-        resultObject = error;
+        resultObject =
+            AcceptSDKParser.createErrorResponse(responseCode, urlConnection.getErrorStream());
       } else {
-        AcceptError error = AcceptInternalError.SDK_INTERNAL_ERROR_NETWORK_CONNECTION;
-        error.setErrorExtraMessage(String.valueOf(responseCode));
-        resultObject = error;
+        resultObject = ErrorTransactionResponse.createErrorResponse(
+            SDKErrorCode.SDK_INTERNAL_ERROR_NETWORK_CONNECTION);
       }
     } catch (SocketTimeoutException e) {
       e.printStackTrace();
-      AcceptError error = AcceptInternalError.SDK_INTERNAL_ERROR_NETWORK_CONNECTION_TIMEOUT;
-      error.setErrorExtraMessage(e.getMessage());
-      resultObject = error;
+      resultObject = ErrorTransactionResponse.createErrorResponse(
+          SDKErrorCode.SDK_INTERNAL_ERROR_NETWORK_CONNECTION_TIMEOUT);
     } catch (IOException e) {
       e.printStackTrace();
-      AcceptError error = AcceptInternalError.SDK_INTERNAL_ERROR_NETWORK_CONNECTION;
-      error.setErrorExtraMessage(e.getMessage());
-      resultObject = error;
+      resultObject = ErrorTransactionResponse.createErrorResponse(
+          SDKErrorCode.SDK_INTERNAL_ERROR_NETWORK_CONNECTION);
     } catch (JSONException e) {
       e.printStackTrace();
-      AcceptError error = AcceptInternalError.SDK_INTERNAL_ERROR_PARSING;
-      error.setErrorExtraMessage(e.getMessage());
-      resultObject = error;
+      resultObject =
+          ErrorTransactionResponse.createErrorResponse(SDKErrorCode.SDK_INTERNAL_ERROR_PARSING);
     }
     return resultObject;
   }
@@ -168,9 +157,9 @@ public class AcceptService extends IntentService {
       EncryptTransactionResponse response = (EncryptTransactionResponse) result;
       resultData.putParcelable(SERVICE_RESULT_RESPONSE_KEY, response);
       resultReceiver.send(SERVICE_RESULT_CODE_SDK_RESPONSE, resultData);
-    } else if (result instanceof AcceptError) {
-      AcceptError response = (AcceptError) result;
-      resultData.putSerializable(SERVICE_RESULT_ERROR_KEY, response);
+    } else if (result instanceof ErrorTransactionResponse) {
+      ErrorTransactionResponse response = (ErrorTransactionResponse) result;
+      resultData.putParcelable(SERVICE_RESULT_ERROR_KEY, response);
       resultReceiver.send(SERVICE_RESULT_CODE_SDK_ERROR, resultData);
     }
   }

@@ -11,7 +11,7 @@ import net.authorize.acceptsdk.parser.JSONConstants;
  * Created by Kiran Bollepalli on 12,July,2016.
  * kbollepa@visa.com
  */
-public class ResponseMessages implements Parcelable{
+public class ResponseMessages implements Parcelable {
 
   /**
    * Result code is either Ok or Error.
@@ -20,9 +20,6 @@ public class ResponseMessages implements Parcelable{
   private String mResultCode;
 
   private List<Message> mMessageList;
-
-  public ResponseMessages() {
-  }
 
   public ResponseMessages(String mResultCode) {
     this.mResultCode = mResultCode;
@@ -54,6 +51,11 @@ public class ResponseMessages implements Parcelable{
     this.mMessageList = mMessageList;
   }
 
+  public boolean addMessage(Message message) {
+    if (mMessageList == null) return false;
+    mMessageList.add(message);
+    return true;
+  }
 
   // ---------- Code for Parcelable interface ----------
 
@@ -80,5 +82,4 @@ public class ResponseMessages implements Parcelable{
       return new ResponseMessages[size];
     }
   };
-
 }

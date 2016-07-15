@@ -6,17 +6,15 @@ import java.util.ArrayList;
 import java.util.List;
 import net.authorize.acceptsdk.datamodel.common.Message;
 import net.authorize.acceptsdk.datamodel.common.ResponseMessages;
-import net.authorize.acceptsdk.datamodel.error.AcceptError;
-import net.authorize.acceptsdk.datamodel.error.AcceptInternalError;
 import net.authorize.acceptsdk.datamodel.merchant.ClientKeyBasedMerchantAuthentication;
 import net.authorize.acceptsdk.datamodel.merchant.MerchantAuthenticationType;
 import net.authorize.acceptsdk.datamodel.transaction.CardData;
 import net.authorize.acceptsdk.datamodel.transaction.EncryptTransactionObject;
 import net.authorize.acceptsdk.datamodel.transaction.response.EncryptTransactionResponse;
+import net.authorize.acceptsdk.datamodel.transaction.response.ErrorTransactionResponse;
 import net.authorize.acceptsdk.datamodel.transaction.response.TransactionResponse;
 import net.authorize.acceptsdk.util.LogUtil;
 import net.authorize.acceptsdk.util.LogUtil.LOG_LEVEL;
-
 import net.authorize.acceptsdk.util.SDKUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -134,29 +132,26 @@ public class AcceptSDKParser {
           parseResponseMessagesSection(responseObject.getJSONObject(MESSAGES_LIST)));
       return encryptTransactionResponse;
     } else {
-      TransactionResponse response = new TransactionResponse();
-      response.setResponseMessages(
-          parseResponseMessagesSection(responseObject.getJSONObject(MESSAGES_LIST)));
+      ResponseMessages responseMessages =
+          parseResponseMessagesSection(responseObject.getJSONObject(MESSAGES_LIST));
+      ErrorTransactionResponse response = new ErrorTransactionResponse(responseMessages);
       return response;
     }
   }
 
-
-
   /**
    * Creates AcceptError Object from error stream.
-   * @param errorStream
-   * @return {@link AcceptError}
+   *
+   * @return {@link ErrorTransactionResponse}
    * @throws IOException
    */
-  //TODO: Need to implement this
-  public static AcceptError createErrorResponse(InputStream errorStream) throws IOException {
-    AcceptError error = AcceptInternalError.SDK_INTERNAL_ERROR_SERVER;
+  public static ErrorTransactionResponse createErrorResponse(int resultCode,
+      InputStream errorStream) throws IOException {
+
     String errorString = SDKUtils.convertStreamToString(errorStream);
     LogUtil.log(LOG_LEVEL.INFO, errorString);
-    // FIXME: Need to parse response and set "setErrorExtraMessage" to AcceptError
-    // error.setErrorExtraMessage(extraMessage);
-    return error;
+    Message message = new Message(String.valueOf(resultCode), errorString);
+    return ErrorTransactionResponse.createErrorResponse(message);
   }
 
   private static void parseOpaqueSection(EncryptTransactionResponse response, JSONObject json)
@@ -188,8 +183,7 @@ public class AcceptSDKParser {
         }
     */
 
-    ResponseMessages responseMessages = new ResponseMessages();
-    responseMessages.setResultCode(json.getString(RESULT_CODE));
+    ResponseMessages responseMessages = new ResponseMessages(json.getString(RESULT_CODE));
     responseMessages.setMessageList(parseMessagesList(json.getJSONArray(MESSAGE)));
     return responseMessages;
   }
