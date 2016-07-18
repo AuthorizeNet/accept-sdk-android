@@ -39,7 +39,7 @@ public class TransactionResponse implements Parcelable {
     return responseMessages.getResultCode();
   }
 
-  public List<Message> getErrorMessageList() {
+  public List<Message> getMessageList() {
     return responseMessages.getMessageList();
   }
   // ---------- Code for Parcelable interface ----------

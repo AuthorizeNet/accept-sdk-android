@@ -17,9 +17,6 @@ public class EncryptTransactionObjectTest {
       "6gSuV295YD86Mq4d86zEsx8C839uMVVjfXm9N4wr6DRuhTHpDU97NFyKtfZncUq8";
   private final String API_LOGIN_ID = "6AB64hcB";
   ClientKeyBasedMerchantAuthentication clientKeyBasedMerchantAuthentication;
-  //TODO: Need to implement this
-  FingerPrintBasedMerchantAuthentication fingerPrintBasedMerchantAuthentication;
-
   private final String CARD_NUMBER = "4111111111111111";
   private final String EXPIRATION_MONTH = "11";
   private final String EXPIRATION_YEAR = "2017";

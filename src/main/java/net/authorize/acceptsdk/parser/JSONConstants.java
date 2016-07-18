@@ -60,11 +60,23 @@ public final class JSONConstants {
   public interface Authentication {
     String NAME = "name";
     String CLIENT_KEY = "clientKey";
+    String FINGER_PRINT = "fingerPrint";
   }
 
   public interface Card {
     String CARD_NUMBER = "cardNumber";
     String EXPIRATION_DATE = "expirationDate";
+    String CARD_CODE = "cardCode";
+    String ZIP = "zip";
+    String CARD_HOLDER_NAME = "fullName";
+  }
+
+  public interface FingerPrint {
+    String HASH_VALUE = "hashValue";
+    String SEQUENCE = "sequence";
+    String TIME_STAMP = "timestamp";
+    String CURRENCY_CODE = "currencyCode";
+    String AMOUNT = "amount";
   }
 
   /* Response related JSON Strings */

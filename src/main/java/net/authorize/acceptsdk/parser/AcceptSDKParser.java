@@ -7,6 +7,8 @@ import java.util.List;
 import net.authorize.acceptsdk.datamodel.common.Message;
 import net.authorize.acceptsdk.datamodel.common.ResponseMessages;
 import net.authorize.acceptsdk.datamodel.merchant.ClientKeyBasedMerchantAuthentication;
+import net.authorize.acceptsdk.datamodel.merchant.FingerPrintBasedMerchantAuthentication;
+import net.authorize.acceptsdk.datamodel.merchant.FingerPrintData;
 import net.authorize.acceptsdk.datamodel.merchant.MerchantAuthenticationType;
 import net.authorize.acceptsdk.datamodel.transaction.CardData;
 import net.authorize.acceptsdk.datamodel.transaction.EncryptTransactionObject;
@@ -27,6 +29,7 @@ import static net.authorize.acceptsdk.parser.JSONConstants.Card;
 import static net.authorize.acceptsdk.parser.JSONConstants.DATA;
 import static net.authorize.acceptsdk.parser.JSONConstants.DATA_DESCRIPTOR;
 import static net.authorize.acceptsdk.parser.JSONConstants.DATA_VALUE;
+import static net.authorize.acceptsdk.parser.JSONConstants.FingerPrint;
 import static net.authorize.acceptsdk.parser.JSONConstants.ID;
 import static net.authorize.acceptsdk.parser.JSONConstants.MERCHANT_AUTHENTICATION;
 import static net.authorize.acceptsdk.parser.JSONConstants.MESSAGE;
@@ -62,6 +65,12 @@ public class AcceptSDKParser {
     CardData cardData = transactionObject.getCardData();
     tokenData.put(Card.CARD_NUMBER, cardData.getCardNumber());
     tokenData.put(Card.EXPIRATION_DATE, cardData.getExpirationInFormatMMYYYY());
+    //Optional fields
+    if (cardData.getCvvCode() != null) tokenData.put(Card.CARD_CODE, cardData.getCvvCode());
+    if (cardData.getZipCode() != null) tokenData.put(Card.ZIP, cardData.getZipCode());
+    if (cardData.getCardHolderName() != null) {
+      tokenData.put(Card.CARD_HOLDER_NAME, cardData.getCardHolderName());
+    }
 
     JSONObject data = new JSONObject();
     data.put(TYPE, TYPE_VALUE_TOKEN);
@@ -79,9 +88,25 @@ public class AcceptSDKParser {
       ClientKeyBasedMerchantAuthentication clientKeyAuth =
           (ClientKeyBasedMerchantAuthentication) transactionObject.getMerchantAuthentication();
       authentication.put(Authentication.CLIENT_KEY, clientKeyAuth.getClientKey());
-    } else if (authenticationType
-        == MerchantAuthenticationType.FINGERPRINT) { //TODO : Need to implement this
-
+    } else if (authenticationType == MerchantAuthenticationType.FINGERPRINT) {
+      FingerPrintBasedMerchantAuthentication fingerPrintAuth =
+          (FingerPrintBasedMerchantAuthentication) transactionObject.getMerchantAuthentication();
+      // Json related to finger print data
+      JSONObject fDataJson = new JSONObject();
+      FingerPrintData fData = fingerPrintAuth.getFingerPrintData();
+      fDataJson.put(FingerPrint.HASH_VALUE, fData.getHashValue());
+      fDataJson.put(FingerPrint.TIME_STAMP, fData.getTimestampString());
+      //Optional fields
+      if (fData.getSequence() != null) {
+        fDataJson.put(FingerPrint.SEQUENCE, fData.getSequence());
+      }
+      if (fData.getCurrencyCode() != null) {
+        fDataJson.put(FingerPrint.CURRENCY_CODE, fData.getCurrencyCode());
+      }
+      if (fData.getAmountString() != null) {
+        fDataJson.put(FingerPrint.AMOUNT, fData.getAmountString());
+      }
+      authentication.put(Authentication.FINGER_PRINT, fDataJson);
     }
 
     JSONObject paymentContainer = new JSONObject();
@@ -90,6 +115,8 @@ public class AcceptSDKParser {
 
     JSONObject request = new JSONObject();
     request.put(CONTAINER_REQUEST, paymentContainer);
+
+    LogUtil.log(LOG_LEVEL.INFO, "getJsonFromEncryptTransaction : " + request.toString());
     return request.toString();
   }
 

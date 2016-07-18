@@ -2,6 +2,7 @@ package net.authorize.acceptsdk;
 
 import java.util.Calendar;
 import net.authorize.acceptsdk.exception.AcceptInvalidCardException;
+import net.authorize.acceptsdk.exception.AcceptSDKException;
 
 /**
  * Class contains utility methods to validate card details.
@@ -16,7 +17,11 @@ public class ValidationManager {
    * @throws AcceptInvalidCardException, If card number is not valid
    */
   public static boolean isValidCardNumber(String cardNumber) throws AcceptInvalidCardException {
-    if (cardNumber == null || cardNumber.length() < 6) {
+    if (cardNumber == null) {
+      throw new AcceptInvalidCardException();
+    }
+    cardNumber = cardNumber.trim();
+    if (cardNumber.length() < 6) {
       throw new AcceptInvalidCardException();
     }
     if (!cardNumber.matches("\\d+")) {
@@ -66,7 +71,8 @@ public class ValidationManager {
         Calendar.getInstance().get(Calendar.MONTH) + 1; // since JANUARY = 0 for Calendar class
 
     if (!month.matches("\\d+")) {
-      throw new AcceptInvalidCardException(AcceptInvalidCardException.INVALID_CARD_EXPIRATION_MONTH);
+      throw new AcceptInvalidCardException(
+          AcceptInvalidCardException.INVALID_CARD_EXPIRATION_MONTH);
     }
     if (!year.matches("\\d+")) {
       throw new AcceptInvalidCardException(AcceptInvalidCardException.INVALID_CARD_EXPIRATION_YEAR);
@@ -87,6 +93,76 @@ public class ValidationManager {
       throw new AcceptInvalidCardException(AcceptInvalidCardException.INVALID_CARD_EXPIRATION_DATE);
     }
 
+    return true;
+  }
+
+  /**
+   * Method validates cvv code of card.
+   * <p>CVV code should be numeric string and
+   * length should be 3 or 4. Other wise throws {@link AcceptInvalidCardException} </>
+   *
+   * @param cvvCode a string
+   * @throws AcceptInvalidCardException
+   */
+  public static boolean isValidCVV(String cvvCode) throws AcceptInvalidCardException {
+    if (cvvCode == null || (cvvCode.length() < 3 || cvvCode.length() > 4)) {
+      throw new AcceptInvalidCardException(AcceptInvalidCardException.INVALID_CVV);
+    }
+
+    if (!cvvCode.matches("\\d+")) {
+      throw new AcceptInvalidCardException(AcceptInvalidCardException.INVALID_CVV);
+    }
+    return true;
+  }
+
+  /**
+   * Method validates zip code of card.
+   * <p> zip code length should be between 1 & 20. Other wise throws {@link
+   * AcceptInvalidCardException} </>
+   *
+   * @param zipCode a string
+   * @throws AcceptInvalidCardException
+   */
+  public static boolean isValidZipCode(String zipCode) throws AcceptInvalidCardException {
+    if (zipCode == null || (zipCode.length() < 1 || zipCode.length() > 20)) {
+      throw new AcceptInvalidCardException(AcceptInvalidCardException.INVALID_ZIP);
+    }
+    return true;
+  }
+
+  /**
+   * Method validates card holder name.
+   * <p> ard holder name length should be between 1 & 64. Other wise throws {@link
+   * AcceptInvalidCardException} </>
+   *
+   * @param fullName a string
+   * @throws AcceptInvalidCardException
+   */
+
+  public static boolean isValidCardHolderName(String fullName) throws AcceptInvalidCardException {
+    if (fullName == null || (fullName.length() < 1 || fullName.length() > 64)) {
+      throw new AcceptInvalidCardException(AcceptInvalidCardException.INVALID_CARD_HOLDER_NAME);
+    }
+    return true;
+  }
+
+  public static boolean isValidFingerPrintHashValue(String hashValue) throws AcceptSDKException {
+    if (hashValue == null || (hashValue.isEmpty())) {
+      throw new AcceptSDKException(AcceptSDKException.INVALID_FINGER_PRINT_HASH_VALUE);
+    }
+    return true;
+  }
+
+
+
+  public static boolean isValidAmount(String amount) throws AcceptSDKException {
+    if (amount == null || (amount.isEmpty())) {
+      throw new AcceptSDKException(AcceptSDKException.INVALID_AMOUNT);
+    }
+    final String regExp = "[0-9]+([,.][0-9]{1,2})?";
+    if (!amount.matches(regExp)) {
+      throw new AcceptSDKException(AcceptSDKException.INVALID_AMOUNT);
+    }
     return true;
   }
 }

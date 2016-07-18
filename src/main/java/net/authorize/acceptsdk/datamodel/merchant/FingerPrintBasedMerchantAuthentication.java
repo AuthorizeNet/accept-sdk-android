@@ -20,8 +20,11 @@ public class FingerPrintBasedMerchantAuthentication extends AbstractMerchantAuth
    */
   public static FingerPrintBasedMerchantAuthentication createMerchantAuthentication(String loginId,
       FingerPrintData fingerPrintData) throws AcceptSDKException {
-    if (loginId == null || fingerPrintData == null) {
-      throw new AcceptSDKException(AcceptSDKException.FINGER_PRINT_ERROR);
+    if (loginId == null || loginId.isEmpty()) {
+      throw new AcceptSDKException(AcceptSDKException.APIKEY_ERROR);
+    }
+    if (fingerPrintData == null) {
+      throw new AcceptSDKException(AcceptSDKException.INVALID_FINGER_PRINT);
     }
     FingerPrintBasedMerchantAuthentication authenticator =
         new FingerPrintBasedMerchantAuthentication();

@@ -16,6 +16,9 @@ public class CardDataTest {
   private String cardNumber = "4111111111111111";
   private String month = "11";
   private String year = "2020";
+  private String cvvCode = "111";
+  private String zipCode = "bangalore";
+  private String cardHolderName = "kiran bollepalli";
 
   @Before public void setUp() throws Exception {
 
@@ -74,5 +77,77 @@ public class CardDataTest {
     expectedException.expect(AcceptInvalidCardException.class);
     expectedException.expectMessage(AcceptInvalidCardException.INVALID_CARD_EXPIRATION_MONTH);
     CardData card = new CardData.Builder(cardNumber, month, year).build();
+  }
+
+  @Test public void testCVV() throws AcceptInvalidCardException {
+    cardNumber = "4111111111111111";
+    month = "11";
+    year = "2020";
+    cvvCode = "111";
+    CardData card = new CardData.Builder(cardNumber, month, year).setCVVCode(cvvCode).build();
+  }
+
+  @Test public void testCVVForException() throws AcceptInvalidCardException {
+    cardNumber = "4111111111111111";
+    month = "11";
+    year = "2020";
+    cvvCode = "111a";
+    expectedException.expect(AcceptInvalidCardException.class);
+    expectedException.expectMessage(AcceptInvalidCardException.INVALID_CVV);
+    CardData card = new CardData.Builder(cardNumber, month, year).setCVVCode(cvvCode).build();
+  }
+
+  @Test public void testZip() throws AcceptInvalidCardException {
+    cardNumber = "4111111111111111";
+    month = "11";
+    year = "2020";
+    cvvCode = "111";
+    zipCode = "b";
+    CardData card = new CardData.Builder(cardNumber, month, year).setCVVCode(cvvCode)
+        .setZipCode(zipCode)
+        .build();
+  }
+
+  @Test public void testZipForException() throws AcceptInvalidCardException {
+    cardNumber = "4111111111111111";
+    month = "11";
+    year = "2020";
+    cvvCode = "111";
+    zipCode = null;
+    expectedException.expect(AcceptInvalidCardException.class);
+    expectedException.expectMessage(AcceptInvalidCardException.INVALID_ZIP);
+    CardData card = new CardData.Builder(cardNumber, month, year).setCVVCode(cvvCode)
+        .setZipCode(zipCode)
+        .build();
+  }
+
+  @Test public void testCardHolderName() throws AcceptInvalidCardException {
+    cardNumber = "4111111111111111";
+    month = "11";
+    year = "2020";
+    cvvCode = "111";
+    zipCode = "bangalore";
+    cardHolderName = "kiran bollepalli";
+    CardData card = new CardData.Builder(cardNumber, month, year).setCVVCode(cvvCode)
+        .setZipCode(zipCode)
+        .setCardHolderName(cardHolderName)
+        .build();
+  }
+
+  @Test public void testCardHolderNameForException() throws AcceptInvalidCardException {
+    cardNumber = "4111111111111111";
+    month = "11";
+    year = "2020";
+    cvvCode = "111";
+    zipCode = "bangalore";
+    cardHolderName =
+        "kiran bollepalli afafakfhaskjfadjsfjasdfhasdfadsjfdasjfhasdfhasdhfjhadsfhadfhfjadfn"
+            + " sdfadffasdfadsfasdfasdfa adsfasdfadsfdasfa";
+    expectedException.expect(AcceptInvalidCardException.class);
+    expectedException.expectMessage(AcceptInvalidCardException.INVALID_CARD_HOLDER_NAME);
+    CardData card = new CardData.Builder(cardNumber, month, year).setCVVCode(cvvCode)
+        .setZipCode(zipCode)
+        .setCardHolderName(cardHolderName)
+        .build();
   }
 }
