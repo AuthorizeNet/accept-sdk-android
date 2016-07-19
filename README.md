@@ -29,12 +29,11 @@ apiClient = new AcceptSDKApiClient.Builder (getActivity(),
                                           .build();
 ```
 
-2. To make the API call, you can create a transaction object as follows:
+2. To make the API call, you can create a Encryption transaction object as follows:
 
 ```java
-  TransactionObject.
-        createTransactionObject(
-            TransactionType.SDK_TRANSACTION_ENCRYPTION) // type of transaction object
+ EncryptTransactionObject transactionObject = TransactionObject.
+         createTransactionObject(TransactionType.SDK_TRANSACTION_ENCRYPTION)// type of transaction object
         .cardData(prepareCardDataFromFields()) // card data to be encrypted
         .merchantAuthentication(prepareMerchantAuthentication()) //Merchant authentication
         .build();
@@ -43,10 +42,60 @@ apiClient = new AcceptSDKApiClient.Builder (getActivity(),
 3. A card object can be created as follows:
 
 ```java
-SDKCardData cardData = new SDKCardData.Builder(ACCOUNT_NUMBER,
+CardData cardData = new CardData.Builder(CARD_NUMBER,
                                                EXPIRATION_MONTH, // MM
                                                EXPIRATION_YEAR) // YYYY
-                                               .cvNumber(CARD_CVV) // Optional
-                                               .type(SDKCardAccountNumberType.PAN) // Optional if unencrypted. If the value is set to a token then it is not optional and must be set to SDKCardType.TOKEN
+                                               .setCVVCode(CARD_CVV) // Optional
+                                               .setZipCode(ZIP_CODE)// Optional
+                                               .setCardHolderName(CARD_HOLDER_NAME)// Optional
                                                .build();
 ```
+
+4. Merchant Authentication can be created as follows:
+
+```java
+ClientKeyBasedMerchantAuthentication merchantAuthentication = ClientKeyBasedMerchantAuthentication.
+                createMerchantAuthentication(API_LOGIN_ID, CLIENT_KEY);
+```
+
+5. When the API client and transaction information are ready, you can make a call to perform a specific API.
+
+```java
+// Parameters: 
+// 1. EncryptTransactionObject - The transaction object for current transaction
+// 2. transaction response callback.
+apiClient.performEncryption(transactionObject, callback);
+```
+
+6) To get a response back, the activity/fragment should implement the `EncryptTransactionCallback` interface.
+
+```java
+@Override
+public void onEncryptionFinished(EncryptTransactionResponse response) 
+{ 
+  Toast.makeText(getActivity(), 
+                 response.getDataDescriptor() + " : " + response.getDataValue(),
+                 Toast.LENGTH_LONG)
+                 .show();
+}
+```
+**OR**
+
+In case of an error:
+
+```java
+@Override
+public void onErrorReceived(ErrorTransactionResponse errorResponse) 
+{ 
+ Message error = errorResponse.getFirstErrorMessage();
+  Toast.makeText(getActivity(), 
+                 error.getMessageCode() + " : " + error.getMessageText() ,
+                 Toast.LENGTH_LONG)
+                 .show();
+}
+```
+
+##Sample Application
+We have a sample application which demonstrates the SDK usage:  
+   https://github.com/AuthorizeNet/accept-sample-android
+
