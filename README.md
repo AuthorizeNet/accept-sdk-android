@@ -17,7 +17,7 @@ Add this line to your app's `build.gradle` inside the `dependencies` section as 
 ## SDK Usage
 After the installation is succesfully complete, perform the following steps to program an Android app with this SDK.
 
-1. To initiate requests with the SDK, create an API client that will make API requests on your behalf. The Accept SDK API client can be built as follows:
+1) To initiate requests with the SDK, create an API client that will make API requests on your behalf. The Accept SDK API client can be built as follows:
 
 ```java
 // Parameters:
@@ -28,8 +28,7 @@ apiClient = new AcceptSDKApiClient.Builder (getActivity(),
                                           .sdkConnectionTimeout(5000) // optional connection time out in milliseconds
                                           .build();
 ```
-
-2. To make the API call, you can create a Encryption transaction object as follows:
+2) To make the API call, you can create a Encryption transaction object as follows:
 
 ```java
  EncryptTransactionObject transactionObject = TransactionObject.
@@ -38,8 +37,7 @@ apiClient = new AcceptSDKApiClient.Builder (getActivity(),
         .merchantAuthentication(prepareMerchantAuthentication()) //Merchant authentication
         .build();
 ```
-
-3. A card object can be created as follows:
+A card object can be created as follows:
 
 ```java
 CardData cardData = new CardData.Builder(CARD_NUMBER,
@@ -51,14 +49,15 @@ CardData cardData = new CardData.Builder(CARD_NUMBER,
                                                .build();
 ```
 
-4. Merchant Authentication can be created as follows:
+Merchant Authentication can be created as follows:
 
 ```java
 ClientKeyBasedMerchantAuthentication merchantAuthentication = ClientKeyBasedMerchantAuthentication.
                 createMerchantAuthentication(API_LOGIN_ID, CLIENT_KEY);
 ```
 Check out  "Obtaining a Public Client Key" in http://developer.authorize.net/api/reference/features/acceptjs.html to get CLIENT_KEY.
-5. When the API client and transaction information are ready, you can make a call to perform a specific API.
+
+3) When the API client and transaction information are ready, you can make a call to perform a specific API.
 
 ```java
 // Parameters: 
@@ -67,7 +66,7 @@ Check out  "Obtaining a Public Client Key" in http://developer.authorize.net/api
 apiClient.performEncryption(transactionObject, callback);
 ```
 
-6) To get a response back, the activity/fragment should implement the `EncryptTransactionCallback` interface.
+4) To get a response back, the activity/fragment should implement the `EncryptTransactionCallback` interface.
 
 ```java
 @Override
