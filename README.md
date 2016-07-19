@@ -57,7 +57,7 @@ CardData cardData = new CardData.Builder(CARD_NUMBER,
 ClientKeyBasedMerchantAuthentication merchantAuthentication = ClientKeyBasedMerchantAuthentication.
                 createMerchantAuthentication(API_LOGIN_ID, CLIENT_KEY);
 ```
-
+Check out  "Obtaining a Public Client Key" in http://developer.authorize.net/api/reference/features/acceptjs.html to get CLIENT_KEY.
 5. When the API client and transaction information are ready, you can make a call to perform a specific API.
 
 ```java
