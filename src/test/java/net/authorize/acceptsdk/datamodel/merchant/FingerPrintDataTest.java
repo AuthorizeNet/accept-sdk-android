@@ -1,6 +1,5 @@
 package net.authorize.acceptsdk.datamodel.merchant;
 
-import net.authorize.acceptsdk.exception.AcceptSDKException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -14,7 +13,7 @@ public class FingerPrintDataTest {
 
   }
 
-  @Test public void testFingerPrintData() throws AcceptSDKException {
+  @Test public void testFingerPrintData() {
     FingerPrintData fingerPrintData =
         new FingerPrintData.Builder("37072f4703346059fbde79b4c8babdcd", 1468821505).setSequence(
             "abc").setAmount(12344.52).build();

@@ -2,11 +2,15 @@ package net.authorize.acceptsdk.datamodel.transaction.response;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import net.authorize.acceptsdk.datamodel.common.Message;
 import net.authorize.acceptsdk.datamodel.common.ResponseMessages;
 import net.authorize.acceptsdk.datamodel.error.SDKErrorCode;
 import net.authorize.acceptsdk.parser.JSONConstants;
+import net.authorize.acceptsdk.util.LogUtil;
+import net.authorize.acceptsdk.util.SDKUtils;
 
 /**
  * Created by Kiran Bollepalli on 15,July,2016.
@@ -24,6 +28,26 @@ public class ErrorTransactionResponse extends TransactionResponse {
     return new ErrorTransactionResponse(responseMessages);
   }
 
+  /**
+   * Creates AcceptError Object from error stream.
+   *
+   * @return {@link ErrorTransactionResponse}
+   * @throws IOException
+   */
+  public static ErrorTransactionResponse createErrorResponse(int resultCode,
+      InputStream errorStream) throws IOException {
+
+    String errorString = SDKUtils.convertStreamToString(errorStream);
+    LogUtil.log(LogUtil.LOG_LEVEL.INFO, errorString);
+    Message message = new Message(String.valueOf(resultCode), errorString);
+    return ErrorTransactionResponse.createErrorResponse(message);
+  }
+
+  public static ErrorTransactionResponse createErrorResponse(SDKErrorCode errorCode) {
+    Message message = new Message(errorCode.getErrorCode(), errorCode.getErrorMessage());
+    return ErrorTransactionResponse.createErrorResponse(message);
+  }
+
   public Message getFirstErrorMessage() {
     Message message = null;
     if (responseMessages == null) return message;
@@ -32,11 +56,6 @@ public class ErrorTransactionResponse extends TransactionResponse {
     if (messageList != null && messageList.size() > 0) message = messageList.get(0);
 
     return message;
-  }
-
-  public static ErrorTransactionResponse createErrorResponse(SDKErrorCode errorCode) {
-    Message message = new Message(errorCode.getErrorCode(), errorCode.getErrorMessage());
-    return ErrorTransactionResponse.createErrorResponse(message);
   }
 
   // ---------- Code for Parcelable interface ----------

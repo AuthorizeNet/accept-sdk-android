@@ -3,6 +3,7 @@ package net.authorize.acceptsdk.internal;
 import android.os.Bundle;
 import android.os.Handler;
 import net.authorize.acceptsdk.AcceptSDKApiClient;
+import net.authorize.acceptsdk.ValidationCallback;
 import net.authorize.acceptsdk.datamodel.transaction.EncryptTransactionObject;
 import net.authorize.acceptsdk.datamodel.transaction.callbacks.EncryptTransactionCallback;
 import net.authorize.acceptsdk.datamodel.transaction.response.EncryptTransactionResponse;
@@ -43,16 +44,25 @@ public class AcceptSDKCore implements TransactionResultReceiver.Receiver {
    * @param callback callback for response of transaction
    * @return boolean, false if another transaction is already in progress.
    */
-  public boolean performEncryption(EncryptTransactionObject transactionObject,
-      EncryptTransactionCallback callback) {
+  public boolean performEncryption(final EncryptTransactionObject transactionObject,
+      final EncryptTransactionCallback callback) {
     if (sTransactionInProgress) return sTransactionInProgress;
-    if (transactionObject == null) return false;
-    registerResultReceiver();
-    sTransactionInProgress = true;
     mEncryptTransactionCallback = callback;
 
-    AcceptService.startActionEncrypt(AcceptSDKApiClient.getContext().get(), transactionObject,
-        mResultReceiver);
+    transactionObject.validateTransactionObject(new ValidationCallback() {
+      @Override public void OnValidationSuccessful() {
+        registerResultReceiver();
+        sTransactionInProgress = true;
+        AcceptService.startActionEncrypt(AcceptSDKApiClient.getContext().get(), transactionObject,
+            mResultReceiver);
+      }
+
+      @Override public void OnValidationFailed(ErrorTransactionResponse errorTransactionResponse) {
+        mEncryptTransactionCallback.onErrorReceived(errorTransactionResponse);
+        sTransactionInProgress = false;
+      }
+    });
+
     return sTransactionInProgress;
   }
 

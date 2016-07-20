@@ -2,13 +2,16 @@ package net.authorize.acceptsdk;
 
 import android.content.Context;
 import android.test.mock.MockContext;
+import java.util.concurrent.CountDownLatch;
 import junit.framework.Assert;
 import net.authorize.acceptsdk.datamodel.merchant.ClientKeyBasedMerchantAuthentication;
 import net.authorize.acceptsdk.datamodel.transaction.CardData;
 import net.authorize.acceptsdk.datamodel.transaction.EncryptTransactionObject;
 import net.authorize.acceptsdk.datamodel.transaction.TransactionType;
-import net.authorize.acceptsdk.exception.AcceptInvalidCardException;
-import net.authorize.acceptsdk.exception.AcceptSDKException;
+import net.authorize.acceptsdk.datamodel.transaction.callbacks.EncryptTransactionCallback;
+import net.authorize.acceptsdk.datamodel.transaction.response.EncryptTransactionResponse;
+import net.authorize.acceptsdk.datamodel.transaction.response.ErrorTransactionResponse;
+import net.authorize.acceptsdk.util.LogUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,13 +50,26 @@ public class AcceptSDKApiClientTest {
   @Test public void testGetContext() throws Exception {
     Assert.assertNotNull(AcceptSDKApiClient.getContext().get());
   }
-
+  // create  a signal to let us know when our task is done.
+  final CountDownLatch signal = new CountDownLatch(1);
   @Test public void testPerformEncryption() throws Exception {
-    boolean value = apiClient.performEncryption(prepareTransactionObject(), null);
+    boolean value =
+        apiClient.performEncryption(prepareTransactionObject(), new EncryptTransactionCallback() {
+
+          @Override public void onErrorReceived(ErrorTransactionResponse error) {
+            LogUtil.log(LogUtil.LOG_LEVEL.INFO, "error : " + error.getResultCode());
+            signal.countDown();
+          }
+
+          @Override public void onEncryptionFinished(EncryptTransactionResponse response) {
+            LogUtil.log(LogUtil.LOG_LEVEL.INFO, "response : " + response.getResultCode());
+            signal.countDown();
+          }
+        });
     Assert.assertEquals(value, true);
   }
 
-  private EncryptTransactionObject prepareTransactionObject() throws AcceptSDKException {
+  private EncryptTransactionObject prepareTransactionObject() {
     ClientKeyBasedMerchantAuthentication merchantAuthentication =
         ClientKeyBasedMerchantAuthentication.
             createMerchantAuthentication(API_LOGIN_ID, CLIENT_KEY);
@@ -68,13 +84,13 @@ public class AcceptSDKApiClientTest {
 
   private CardData prepareTestCardData() {
     CardData cardData = null;
-    try {
-      cardData =
-          new CardData.Builder(CARD_NUMBER, CARD_EXPIRATION_MONTH, CARD_EXPIRATION_YEAR).build();
-    } catch (AcceptInvalidCardException e) {
-      // Handle exception if the card is invalid
-      e.printStackTrace();
-    }
+    //try {
+    //  cardData =
+    //      new CardData.Builder(CARD_NUMBER, CARD_EXPIRATION_MONTH, CARD_EXPIRATION_YEAR).build();
+    //} catch (AcceptInvalidCardException e) {
+    //  // Handle exception if the card is invalid
+    //  e.printStackTrace();
+    //}
     return cardData;
   }
 }

@@ -1,6 +1,7 @@
 package net.authorize.acceptsdk.datamodel.merchant;
 
 import java.io.Serializable;
+import net.authorize.acceptsdk.ValidationCallback;
 
 /**
  * A common class used to represent Merchant Authentication.
@@ -21,4 +22,5 @@ public abstract class AbstractMerchantAuthentication implements Serializable {
     return this.mApiLoginID;
   }
 
+   public  abstract boolean validateMerchantAuthentication(ValidationCallback callback);
 }

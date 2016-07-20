@@ -1,8 +1,10 @@
 package net.authorize.acceptsdk.datamodel.transaction;
 
 import java.io.Serializable;
+import net.authorize.acceptsdk.ValidationCallback;
 import net.authorize.acceptsdk.ValidationManager;
-import net.authorize.acceptsdk.exception.AcceptInvalidCardException;
+import net.authorize.acceptsdk.datamodel.error.SDKErrorCode;
+import net.authorize.acceptsdk.datamodel.transaction.response.ErrorTransactionResponse;
 
 /**
  * Created by Kiran Bollepalli on 07,July,2016.
@@ -21,6 +23,66 @@ public class CardData implements Serializable {
   private String cvvCode;
   private String zipCode;
   private String cardHolderName;
+
+  /**
+   * Creates an instance of object to store keyed card data. Also it sets a
+   */
+  private CardData(Builder builder) {
+    this.cardNumber = builder.cardNumber;
+    this.expirationMonth = builder.expirationMonth;
+    this.expirationYear = builder.expirationYear;
+    this.cvvCode = builder.cvvCode;
+    this.zipCode = builder.zipCode;
+    this.cardHolderName = builder.cardHolderName;
+  }
+
+  public boolean validateCardData(ValidationCallback callback) {
+    boolean result = false;
+    if (!ValidationManager.isValidCardNumber(cardNumber)) {
+      callback.OnValidationFailed(
+          ErrorTransactionResponse.createErrorResponse(SDKErrorCode.E_WC_05));
+      return result;
+    }
+    if (!ValidationManager.isValidExpirationMonth(expirationMonth)) {
+      callback.OnValidationFailed(
+          ErrorTransactionResponse.createErrorResponse(SDKErrorCode.E_WC_06));
+      return result;
+    }
+
+    if (!ValidationManager.isValidExpirationYear(expirationYear)) {
+      callback.OnValidationFailed(
+          ErrorTransactionResponse.createErrorResponse(SDKErrorCode.E_WC_07));
+      return result;
+    }
+
+    if (!ValidationManager.isValidExpirationDate(expirationYear, expirationYear)) {
+      callback.OnValidationFailed(
+          ErrorTransactionResponse.createErrorResponse(SDKErrorCode.E_WC_08));
+      return result;
+    }
+
+    //COMMENT: since cvv,zip and card Holder name are optional, validate only if client
+    // application provides value
+    if (cvvCode != null && !ValidationManager.isValidCVV(cvvCode)) {
+      callback.OnValidationFailed(
+          ErrorTransactionResponse.createErrorResponse(SDKErrorCode.E_WC_15));
+      return result;
+    }
+
+    if (zipCode != null && !ValidationManager.isValidZipCode(zipCode)) {
+      callback.OnValidationFailed(
+          ErrorTransactionResponse.createErrorResponse(SDKErrorCode.E_WC_16));
+      return result;
+    }
+    if (cardHolderName != null && !ValidationManager.isValidCardHolderName(cardHolderName)) {
+      callback.OnValidationFailed(
+          ErrorTransactionResponse.createErrorResponse(SDKErrorCode.E_WC_17));
+      return result;
+    }
+
+   // callback.OnValidationSuccessful();
+    return true;
+  }
 
   public String getCvvCode() {
     return cvvCode;
@@ -44,32 +106,6 @@ public class CardData implements Serializable {
 
   public void setCardHolderName(String cardHolderName) {
     this.cardHolderName = cardHolderName;
-  }
-
-  /**
-   * Creates an instance of object to store keyed card data. Also it sets a
-   */
-  private CardData(Builder builder) throws AcceptInvalidCardException {
-    if (ValidationManager.isValidCardNumber(builder.cardNumber)) {
-      this.cardNumber = builder.cardNumber;
-    }
-
-    if (ValidationManager.isValidExpirationDate(builder.expirationMonth, builder.expirationYear)) {
-      this.expirationMonth = builder.expirationMonth;
-      this.expirationYear = builder.expirationYear;
-    }
-
-    if (builder.cvvCode != null && (ValidationManager.isValidCVV(builder.cvvCode))) {
-      this.cvvCode = builder.cvvCode;
-    }
-
-    if (builder.zipCode != null && ValidationManager.isValidZipCode(builder.zipCode)) {
-      this.zipCode = builder.zipCode;
-    }
-    if (builder.cardHolderName != null && ValidationManager.isValidCardHolderName(
-        builder.cardHolderName)) {
-      this.cardHolderName = builder.cardHolderName;
-    }
   }
 
   public String getCardNumber() {
@@ -130,7 +166,7 @@ public class CardData implements Serializable {
       return this;
     }
 
-    public CardData build() throws AcceptInvalidCardException {
+    public CardData build() {
       return new CardData(this);
     }
   }

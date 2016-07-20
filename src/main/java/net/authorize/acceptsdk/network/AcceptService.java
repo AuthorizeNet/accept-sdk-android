@@ -130,7 +130,7 @@ public class AcceptService extends IntentService {
         }
       } else if (responseCode == HttpsURLConnection.HTTP_INTERNAL_ERROR) {
         resultObject =
-            AcceptSDKParser.createErrorResponse(responseCode, urlConnection.getErrorStream());
+            ErrorTransactionResponse.createErrorResponse(responseCode, urlConnection.getErrorStream());
       } else {
         resultObject = ErrorTransactionResponse.createErrorResponse(
             SDKErrorCode.SDK_INTERNAL_ERROR_NETWORK_CONNECTION);

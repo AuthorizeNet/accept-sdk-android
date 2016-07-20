@@ -166,21 +166,6 @@ public class AcceptSDKParser {
     }
   }
 
-  /**
-   * Creates AcceptError Object from error stream.
-   *
-   * @return {@link ErrorTransactionResponse}
-   * @throws IOException
-   */
-  public static ErrorTransactionResponse createErrorResponse(int resultCode,
-      InputStream errorStream) throws IOException {
-
-    String errorString = SDKUtils.convertStreamToString(errorStream);
-    LogUtil.log(LOG_LEVEL.INFO, errorString);
-    Message message = new Message(String.valueOf(resultCode), errorString);
-    return ErrorTransactionResponse.createErrorResponse(message);
-  }
-
   private static void parseOpaqueSection(EncryptTransactionResponse response, JSONObject json)
       throws JSONException {
  /*

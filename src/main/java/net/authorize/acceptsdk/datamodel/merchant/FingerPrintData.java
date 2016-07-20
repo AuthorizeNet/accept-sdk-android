@@ -1,8 +1,10 @@
 package net.authorize.acceptsdk.datamodel.merchant;
 
 import java.io.Serializable;
+import net.authorize.acceptsdk.ValidationCallback;
 import net.authorize.acceptsdk.ValidationManager;
-import net.authorize.acceptsdk.exception.AcceptSDKException;
+import net.authorize.acceptsdk.datamodel.error.SDKErrorCode;
+import net.authorize.acceptsdk.datamodel.transaction.response.ErrorTransactionResponse;
 
 /**
  * POJO Class of FingerPrint Data
@@ -26,6 +28,39 @@ public class FingerPrintData implements Serializable {
     this.sequence = builder.sequence;
     this.currencyCode = builder.currencyCode;
     this.amount = builder.amount;
+  }
+
+  public boolean validateFingerPrint(ValidationCallback callback) {
+    if (!ValidationManager.isValidString(hashValue)) {
+      callback.OnValidationFailed(
+          ErrorTransactionResponse.createErrorResponse(SDKErrorCode.E_WC_09));
+      return false;
+    }
+    if (!ValidationManager.isValidString(getTimestampString())) {
+      callback.OnValidationFailed(
+          ErrorTransactionResponse.createErrorResponse(SDKErrorCode.E_WC_11));
+      return false;
+    }
+    if (sequence != null && !ValidationManager.isValidString(sequence)) {
+      callback.OnValidationFailed(
+          ErrorTransactionResponse.createErrorResponse(SDKErrorCode.E_WC_12));
+      return false;
+    }
+    //FIXME :  currency code and amount dont have validation error mapping.
+    if (currencyCode != null && !ValidationManager.isValidString(currencyCode)) {
+      callback.OnValidationFailed(
+          ErrorTransactionResponse.createErrorResponse(SDKErrorCode.E_WC_13));
+      return false;
+    }
+
+    if (getAmountString() != null && !ValidationManager.isValidAmount(getAmountString())) {
+      callback.OnValidationFailed(
+          ErrorTransactionResponse.createErrorResponse(SDKErrorCode.E_WC_13));
+      return false;
+    }
+
+//    callback.OnValidationSuccessful();
+    return true;
   }
 
   public String getHashValue() {
@@ -98,13 +133,12 @@ public class FingerPrintData implements Serializable {
       return this;
     }
 
-    public FingerPrintData.Builder setAmount(double amount) throws AcceptSDKException {
-      ValidationManager.isValidAmount(String.valueOf(amount));
+    public FingerPrintData.Builder setAmount(double amount) {
       this.amount = amount;
       return this;
     }
 
-    public FingerPrintData build(){
+    public FingerPrintData build() {
       return new FingerPrintData(this);
     }
   }

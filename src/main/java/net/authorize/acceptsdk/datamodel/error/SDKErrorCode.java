@@ -11,15 +11,26 @@ public enum SDKErrorCode{
   SDK_INTERNAL_ERROR_NETWORK_CONNECTION("1003", "Cannot access the network."),
   SDK_INTERNAL_ERROR_NETWORK_CONNECTION_TIMEOUT("1004", "Network connection timed out."),
   SDK_INTERNAL_ERROR_SERVER("1005", "Cannot contact the server."),
-  SDK_INTERNAL_ERROR_GENERAL_FAILURE("1006", "Unknown general error occurred.");
+  SDK_INTERNAL_ERROR_GENERAL_FAILURE("1006", "Unknown general error occurred."),
 
-  //E00000("E00000", "Unknown Error"),
-  //E00001("E00001", "An error occurred during processing. Please try again."),
-  //E00003("E00003", "Schema error"),
-  //E00007("E00007", "User authentication failed due to invalid authentication values."),
-  //E00059("E00059", "The authentication type is not allowed for this method call."),
-  //E00073("E00073", "expirationDate is invalid"),
-  //E00117("E00117", "Field validation error.");
+  //E_WC_01("E_WC_01" , "Please include Accept.js library from cdn."),
+  E_WC_02("E_WC_02", "A HTTPS connection is required."),
+ // E_WC_03("E_WC_03" , "Accept.js is not loaded correctly."),
+  E_WC_04("E_WC_04" , "Please provide mandatory field to library."),
+  E_WC_05("E_WC_05" , "Please provide valid credit card number."),
+  E_WC_06("E_WC_06" , "Please provide valid expiration month."),
+  E_WC_07("E_WC_07" , "Please provide valid expiration year."),
+  E_WC_08("E_WC_08" , "Expiration date must be in the future."),
+  E_WC_09("E_WC_09" , "Fingerprint hash should not be blank."),
+  E_WC_10("E_WC_10" , "Please provide valid api login id."),
+  E_WC_11("E_WC_11" , "Please provide valid timestamp in utc."),
+  E_WC_12("E_WC_12" , "Sequence attribute should not be blank."),
+  E_WC_13("E_WC_13" , "Invalid Fingerprint."),
+  E_WC_14("E_WC_14" , "Accept encryption failed."),
+  E_WC_15("E_WC_15" , "Please provide valid CVV."),
+  E_WC_16("E_WC_16" , "Please provide valid Zip code."),
+  E_WC_17("E_WC_17" , "Please provide valid card holder name."),
+  E_WC_18("E_W_18" , "Client key is required.");
 
   private String errorCode;
   private String errorMessage;

@@ -2,8 +2,8 @@ package net.authorize.acceptsdk.datamodel.transaction;
 
 import java.io.Serializable;
 import java.util.UUID;
+import net.authorize.acceptsdk.ValidationCallback;
 import net.authorize.acceptsdk.datamodel.merchant.AbstractMerchantAuthentication;
-import net.authorize.acceptsdk.exception.AcceptSDKException;
 
 /**
  * Created by Kiran Bollepalli on 07,July,2016.
@@ -56,17 +56,18 @@ public abstract class TransactionObject implements Serializable {
     this.mTransactionType = mTransactionType;
   }
 
+  public  abstract void validateTransactionObject(ValidationCallback callback);
+
   /**
    * A factory method for creating proper transaction object.
    *
    * @param type transaction type
    * @return one of transaction objects
-   * @throws AcceptSDKException, If Transaction type is null.
    */
   public static TransactionObject.Builder createTransactionObject(TransactionType type)
-      throws AcceptSDKException {
+      throws IllegalArgumentException {
 
-    if (type == null) throw new AcceptSDKException(AcceptSDKException.TRANSACTION_TYPE_ERROR);
+    if (type == null) throw new IllegalArgumentException("TransactionType must not be null");
     switch (type) {
       case SDK_TRANSACTION_ENCRYPTION:
         return new EncryptTransactionObject.Builder();
