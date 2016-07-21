@@ -13,6 +13,8 @@ import net.authorize.acceptsdk.datamodel.transaction.response.ErrorTransactionRe
 public class CardData implements Serializable {
 
   private static final long serialVersionUID = 2L;
+  private static final String MONTH_PREFIX = "0";
+  private static final String YEAR_PREFIX = "20";
 
   //Required
   private String cardNumber;
@@ -28,12 +30,37 @@ public class CardData implements Serializable {
    * Creates an instance of object to store keyed card data. Also it sets a
    */
   private CardData(Builder builder) {
-    this.cardNumber = builder.cardNumber;
-    this.expirationMonth = builder.expirationMonth;
-    this.expirationYear = builder.expirationYear;
-    this.cvvCode = builder.cvvCode;
-    this.zipCode = builder.zipCode;
-    this.cardHolderName = builder.cardHolderName;
+    this.cardNumber = trimString(builder.cardNumber);
+    this.expirationMonth = prefixMonth(builder.expirationMonth);
+    this.expirationYear = prefixYear(builder.expirationYear);
+    this.cvvCode = trimString(builder.cvvCode);
+    this.zipCode = trimString(builder.zipCode);
+    this.cardHolderName = trimString(builder.cardHolderName);
+  }
+
+  private String trimString(String data) {
+    if (ValidationManager.isValidString(data)) {
+      data = data.trim();
+    }
+    return data;
+  }
+
+  private String prefixMonth(String month) {
+    if (ValidationManager.isValidString(month)) {
+      month = month.trim();
+      if (month.length() == 1) month = MONTH_PREFIX + month;
+    }
+
+    return month;
+  }
+
+  private String prefixYear(String year) {
+    if (ValidationManager.isValidString(year)) {
+      year = year.trim();
+      if (year.length() == 2) year = YEAR_PREFIX + year;
+    }
+
+    return year;
   }
 
   public boolean validateCardData(ValidationCallback callback) {
@@ -80,7 +107,7 @@ public class CardData implements Serializable {
       return result;
     }
 
-   // callback.OnValidationSuccessful();
+    // callback.OnValidationSuccessful();
     return true;
   }
 

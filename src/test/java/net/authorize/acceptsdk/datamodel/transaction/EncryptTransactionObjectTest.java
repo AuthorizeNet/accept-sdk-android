@@ -1,6 +1,9 @@
 package net.authorize.acceptsdk.datamodel.transaction;
 
+import junit.framework.Assert;
+import net.authorize.acceptsdk.ValidationCallback;
 import net.authorize.acceptsdk.datamodel.merchant.ClientKeyBasedMerchantAuthentication;
+import net.authorize.acceptsdk.datamodel.transaction.response.ErrorTransactionResponse;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -20,11 +23,21 @@ public class EncryptTransactionObjectTest {
   private final String EXPIRATION_YEAR = "2017";
   private final String CVV = "256";
   CardData cardData;
+  ValidationCallback callBack;
 
   @Before public void setUp()    {
     clientKeyBasedMerchantAuthentication = ClientKeyBasedMerchantAuthentication.
         createMerchantAuthentication(API_LOGIN_ID, CLIENT_KEY);
     cardData = new CardData.Builder(CARD_NUMBER, EXPIRATION_MONTH, EXPIRATION_YEAR).build();
+    callBack = new ValidationCallback() {
+      @Override public void OnValidationSuccessful() {
+
+      }
+
+      @Override public void OnValidationFailed(ErrorTransactionResponse errorTransactionResponse) {
+
+      }
+    };
   }
 
   @Test public void testEncryptTransactionObjectInstantiation()    {
@@ -32,16 +45,22 @@ public class EncryptTransactionObjectTest {
         createTransactionObject(TransactionType.SDK_TRANSACTION_ENCRYPTION)
         .cardData(cardData)
         .merchantAuthentication(clientKeyBasedMerchantAuthentication).build();
+    Assert.assertEquals(true,transactionObject.validateTransactionObject(callBack));
   }
 
-  @Rule public ExpectedException expectedException = ExpectedException.none();
-  @Test public void testEncryptTransactionObjectInstantiation1()    {
-
-  //  expectedException.expect(AcceptSDKException.class);
-  //  expectedException.expectMessage(AcceptSDKException.TRANSACTION_TYPE_ERROR);
+  @Test public void testCardDataForError()    {
     TransactionObject transactionObject = TransactionObject.
-        createTransactionObject(null)
-        .cardData(cardData)
+        createTransactionObject(TransactionType.SDK_TRANSACTION_ENCRYPTION)
+        .cardData(null)
         .merchantAuthentication(clientKeyBasedMerchantAuthentication).build();
+    Assert.assertEquals(false,transactionObject.validateTransactionObject(callBack));
+  }
+
+  @Test public void testAuthenticationForError()    {
+    TransactionObject transactionObject = TransactionObject.
+        createTransactionObject(TransactionType.SDK_TRANSACTION_ENCRYPTION)
+        .cardData(cardData)
+        .merchantAuthentication(null).build();
+    Assert.assertEquals(false,transactionObject.validateTransactionObject(callBack));
   }
 }

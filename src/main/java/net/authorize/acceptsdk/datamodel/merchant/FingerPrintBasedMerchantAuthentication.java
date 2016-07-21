@@ -22,14 +22,11 @@ public class FingerPrintBasedMerchantAuthentication extends AbstractMerchantAuth
    */
   public static FingerPrintBasedMerchantAuthentication createMerchantAuthentication(String loginId,
       FingerPrintData fingerPrintData) {
-    //if (loginId == null || loginId.isEmpty()) {
-    //  throw new AcceptSDKException(AcceptSDKException.APIKEY_ERROR);
-    //}
-    //if (fingerPrintData == null) {
-    //  throw new AcceptSDKException(AcceptSDKException.INVALID_FINGER_PRINT);
-    //}
     FingerPrintBasedMerchantAuthentication authenticator =
         new FingerPrintBasedMerchantAuthentication();
+
+    if (loginId != null) loginId = loginId.trim();
+
     authenticator.mApiLoginID = loginId;
     authenticator.mFingerPrintData = fingerPrintData;
     authenticator.merchantAuthenticationType = MerchantAuthenticationType.FINGERPRINT;
@@ -45,20 +42,31 @@ public class FingerPrintBasedMerchantAuthentication extends AbstractMerchantAuth
     mFingerPrintData = fingerPrintData;
   }
 
+  /**
+   *  Validates Fingerprint based Merchant Authentication.
+   *
+   * @param callback  {@link ValidationCallback}
+   * @return boolean true, if it is success. false if validation fails.
+   */
+
   @Override public boolean validateMerchantAuthentication(ValidationCallback callback) {
     if (!ValidationManager.isValidString(mApiLoginID)) {
       callback.OnValidationFailed(
           ErrorTransactionResponse.createErrorResponse(SDKErrorCode.E_WC_10));
       return false;
     }
+
     if (mFingerPrintData == null) {
+      callback.OnValidationFailed(
+          ErrorTransactionResponse.createErrorResponse(SDKErrorCode.E_WC_04));
+      return false;
+    }
+
+    if (!mFingerPrintData.validateFingerPrint(callback)) {
       callback.OnValidationFailed(
           ErrorTransactionResponse.createErrorResponse(SDKErrorCode.E_WC_13));
       return false;
     }
-    if(!mFingerPrintData.validateFingerPrint(callback))
-      return false;
-    //callback.OnValidationSuccessful();
     return true;
   }
 }

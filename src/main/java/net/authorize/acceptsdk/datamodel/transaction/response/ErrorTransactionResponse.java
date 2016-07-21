@@ -22,6 +22,12 @@ public class ErrorTransactionResponse extends TransactionResponse {
     super(responseMessages);
   }
 
+  /**
+   * Create Error Response from {@link Message} object.
+   *
+   * @param errorMessage Message Object.
+   * @return {@link ErrorTransactionResponse}
+   */
   public static ErrorTransactionResponse createErrorResponse(Message errorMessage) {
     ResponseMessages responseMessages = new ResponseMessages(JSONConstants.ResultCode.ERROR);
     responseMessages.addMessage(errorMessage);
@@ -29,20 +35,41 @@ public class ErrorTransactionResponse extends TransactionResponse {
   }
 
   /**
-   * Creates AcceptError Object from error stream.
+   * Create Error Response from Error Stream
    *
+   * @param errorCode error Message code.
+   * @param errorStream error stream.
    * @return {@link ErrorTransactionResponse}
    * @throws IOException
    */
-  public static ErrorTransactionResponse createErrorResponse(int resultCode,
+  public static ErrorTransactionResponse createErrorResponse(String errorCode,
       InputStream errorStream) throws IOException {
 
     String errorString = SDKUtils.convertStreamToString(errorStream);
     LogUtil.log(LogUtil.LOG_LEVEL.INFO, errorString);
-    Message message = new Message(String.valueOf(resultCode), errorString);
+    Message message = new Message(errorCode, errorString);
     return ErrorTransactionResponse.createErrorResponse(message);
   }
 
+  /**
+   * Create Error Response
+   *
+   * @param {@link SDKErrorCode} error code.
+   * @param errorMessage error message.
+   * @return {@link ErrorTransactionResponse}
+   */
+  public static ErrorTransactionResponse createErrorResponse(SDKErrorCode errorCode,
+      String errorMessage) {
+    Message message = new Message(errorCode.getErrorCode(), errorMessage);
+    return ErrorTransactionResponse.createErrorResponse(message);
+  }
+
+  /**
+   * Create Error Response
+   *
+   * @param {@link SDKErrorCode} error code.
+   * @return {@link ErrorTransactionResponse}
+   */
   public static ErrorTransactionResponse createErrorResponse(SDKErrorCode errorCode) {
     Message message = new Message(errorCode.getErrorCode(), errorCode.getErrorMessage());
     return ErrorTransactionResponse.createErrorResponse(message);

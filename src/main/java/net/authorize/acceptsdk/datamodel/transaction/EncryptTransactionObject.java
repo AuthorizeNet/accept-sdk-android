@@ -16,18 +16,23 @@ public class EncryptTransactionObject extends TransactionObject {
     this.mMerchantAuthentication = builder.merchantAuthentication;
   }
 
-  @Override public void validateTransactionObject(final ValidationCallback callback) {
+  @Override public boolean validateTransactionObject(final ValidationCallback callback) {
     if (mMerchantAuthentication == null) {
       callback.OnValidationFailed(
           ErrorTransactionResponse.createErrorResponse(SDKErrorCode.E_WC_04));
+      return false;
     }
     if (mCardData == null) {
       callback.OnValidationFailed(
           ErrorTransactionResponse.createErrorResponse(SDKErrorCode.E_WC_04));
+      return false;
     }
     if (mMerchantAuthentication.validateMerchantAuthentication(callback)
         && mCardData.validateCardData(callback)) {
       callback.OnValidationSuccessful();
+      return true;
+    } else {
+      return false;
     }
   }
 

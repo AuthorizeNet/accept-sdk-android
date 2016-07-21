@@ -1,10 +1,10 @@
 package net.authorize.acceptsdk.datamodel.merchant;
 
-import org.junit.After;
+import junit.framework.Assert;
+import net.authorize.acceptsdk.ValidationCallback;
+import net.authorize.acceptsdk.datamodel.transaction.response.ErrorTransactionResponse;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by Kiran Bollepalli on 14,July,2016.
@@ -12,23 +12,48 @@ import static org.junit.Assert.*;
  */
 public class FingerPrintBasedMerchantAuthenticationTest {
 
-  @Before public void setUp() throws Exception {
+  private FingerPrintData fingerPrintData;
+  private String mApiLoginId;
+  ValidationCallback callBack;
 
+  @Before public void setUp() {
+    mApiLoginId = "6AB64hcB";
+    fingerPrintData =
+        new FingerPrintData.Builder("37072f4703346059fbde79b4c8babdcd", 1468821505).setSequence(
+            "abc").setAmount(12344.52).build();
+    callBack = new ValidationCallback() {
+      @Override public void OnValidationSuccessful() {
+
+      }
+
+      @Override public void OnValidationFailed(ErrorTransactionResponse errorTransactionResponse) {
+
+      }
+    };
   }
 
-  @After public void tearDown() throws Exception {
-
+  @Test public void testCreateMerchantAuthentication() {
+    FingerPrintBasedMerchantAuthentication merchantAuthentication =
+        FingerPrintBasedMerchantAuthentication.createMerchantAuthentication(mApiLoginId,
+            fingerPrintData);
+    Assert.assertEquals(true, merchantAuthentication.validateMerchantAuthentication(callBack));
   }
 
-  @Test public void testCreateMerchantAuthentication() throws Exception {
-
+  @Test public void testApiLoginIDForNull() {
+    mApiLoginId = null;
+    FingerPrintBasedMerchantAuthentication merchantAuthentication =
+        FingerPrintBasedMerchantAuthentication.createMerchantAuthentication(mApiLoginId,
+            fingerPrintData);
+    Assert.assertEquals(false, merchantAuthentication.validateMerchantAuthentication(callBack));
   }
 
-  @Test public void testGetFingerPrintData() throws Exception {
-
+  @Test public void testFingerPrintForNull() {
+    mApiLoginId = "6AB64hcB";
+    fingerPrintData = null;
+    FingerPrintBasedMerchantAuthentication merchantAuthentication =
+        FingerPrintBasedMerchantAuthentication.createMerchantAuthentication(mApiLoginId,
+            fingerPrintData);
+    Assert.assertEquals(false, merchantAuthentication.validateMerchantAuthentication(callBack));
   }
 
-  @Test public void testSetFingerPrintData() throws Exception {
-
-  }
 }

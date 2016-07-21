@@ -5,6 +5,7 @@ import net.authorize.acceptsdk.ValidationCallback;
 
 /**
  * A common class used to represent Merchant Authentication.
+ *
  * Created by Kiran Bollepalli on 08,July,2016.
  * kbollepa@visa.com
  */
@@ -22,5 +23,11 @@ public abstract class AbstractMerchantAuthentication implements Serializable {
     return this.mApiLoginID;
   }
 
+  /**
+   *  Validates Merchant Authentication.
+   *
+   * @param callback  {@link ValidationCallback}
+   * @return boolean true, if it is success. false if validation fails.
+   */
    public  abstract boolean validateMerchantAuthentication(ValidationCallback callback);
 }

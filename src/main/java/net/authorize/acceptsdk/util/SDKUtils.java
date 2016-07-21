@@ -36,8 +36,6 @@ import org.apache.http.conn.ssl.SSLSocketFactory;
 
 public class SDKUtils {
 
-  private final static String CERTIFICATES = "certificates";
-  private final static String CERT_EXT = ".cer";
 
   /** Format of 'date': yyyy-MM-dd */
   private final static String DATE_FORMAT = "yyyy-MM-dd";

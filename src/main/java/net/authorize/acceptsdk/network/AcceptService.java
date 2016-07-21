@@ -124,29 +124,27 @@ public class AcceptService extends IntentService {
          *   > If it is "Error" that means transaction is failed.
          */
         if (response.getResultCode().equals(ResultCode.OK)) {
-          resultObject = (EncryptTransactionResponse) response;
+          resultObject = response;
         } else { //Error case
-          resultObject = (ErrorTransactionResponse) response;
+          resultObject = response;
         }
       } else if (responseCode == HttpsURLConnection.HTTP_INTERNAL_ERROR) {
         resultObject =
-            ErrorTransactionResponse.createErrorResponse(responseCode, urlConnection.getErrorStream());
+            ErrorTransactionResponse.createErrorResponse(SDKErrorCode.E_WC_02.getErrorCode(),
+                urlConnection.getErrorStream());
       } else {
-        resultObject = ErrorTransactionResponse.createErrorResponse(
-            SDKErrorCode.SDK_INTERNAL_ERROR_NETWORK_CONNECTION);
+        //FIXME: Need to revisit this code. To map to  appropriate error.
+        resultObject = ErrorTransactionResponse.createErrorResponse(SDKErrorCode.E_WC_02);
       }
     } catch (SocketTimeoutException e) {
-      e.printStackTrace();
-      resultObject = ErrorTransactionResponse.createErrorResponse(
-          SDKErrorCode.SDK_INTERNAL_ERROR_NETWORK_CONNECTION_TIMEOUT);
-    } catch (IOException e) {
-      e.printStackTrace();
-      resultObject = ErrorTransactionResponse.createErrorResponse(
-          SDKErrorCode.SDK_INTERNAL_ERROR_NETWORK_CONNECTION);
-    } catch (JSONException e) {
-      e.printStackTrace();
       resultObject =
-          ErrorTransactionResponse.createErrorResponse(SDKErrorCode.SDK_INTERNAL_ERROR_PARSING);
+          ErrorTransactionResponse.createErrorResponse(SDKErrorCode.E_WC_02, e.getMessage());
+    } catch (IOException e) {
+      resultObject =
+          ErrorTransactionResponse.createErrorResponse(SDKErrorCode.E_WC_02, e.getMessage());
+    } catch (JSONException e) {
+      resultObject =
+          ErrorTransactionResponse.createErrorResponse(SDKErrorCode.E_WC_14, e.getMessage());
     }
     return resultObject;
   }

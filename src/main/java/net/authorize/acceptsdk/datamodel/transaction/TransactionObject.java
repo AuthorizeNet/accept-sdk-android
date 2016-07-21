@@ -56,7 +56,7 @@ public abstract class TransactionObject implements Serializable {
     this.mTransactionType = mTransactionType;
   }
 
-  public  abstract void validateTransactionObject(ValidationCallback callback);
+  public  abstract boolean validateTransactionObject(ValidationCallback callback);
 
   /**
    * A factory method for creating proper transaction object.

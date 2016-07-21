@@ -59,7 +59,7 @@ public class AcceptSDKApiClient {
    * @param callback callback for response of transaction
    * @return boolean, false if another transaction is already in progress.
    */
-  public boolean performEncryption(EncryptTransactionObject transactionObject,
+  public boolean getTokenWithRequest(EncryptTransactionObject transactionObject,
       EncryptTransactionCallback callback) {
     if (transactionObject == null) {
       throw new NullPointerException("Transaction Object must not be null");

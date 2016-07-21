@@ -43,7 +43,6 @@ public class AcceptServiceTest extends ServiceTestCase<AcceptService> {
   private void registerResultReceiver() {
     if (mResultReceiver != null) return;
     mResultReceiver = new TransactionResultReceiver(new Handler());
-    //mResultReceiver.setReceiver(this);
   }
 
   public void testStartActionEncrypt() throws Exception {
@@ -54,15 +53,11 @@ public class AcceptServiceTest extends ServiceTestCase<AcceptService> {
   public void testOnHandleIntent() throws Exception {
     Intent intent = new Intent(getSystemContext(), AcceptService.class);
     intent.setAction(AcceptService.ACTION_ENCRYPT);
-    //Bundle bundle = new Bundle();
-    //bundle.putString(EXTRA_PARAM_ENVELOPE_ENCODING, envelope.getEncoding());
-    //bundle.putParcelable(EXTRA_PARAM_CONNECTION_CALLBACK, callback);
-    //intent.putExtras(bundle);
     startService(intent);
     assertNotNull(getService());
   }
 
-  private EncryptTransactionObject prepareTransactionObject()    {
+  private EncryptTransactionObject prepareTransactionObject() {
     ClientKeyBasedMerchantAuthentication merchantAuthentication =
         ClientKeyBasedMerchantAuthentication.
             createMerchantAuthentication(API_LOGIN_ID, CLIENT_KEY);
@@ -76,10 +71,8 @@ public class AcceptServiceTest extends ServiceTestCase<AcceptService> {
   }
 
   private CardData prepareTestCardData() {
-    CardData cardData = null;
-
-      cardData =
-          new CardData.Builder(CARD_NUMBER, CARD_EXPIRATION_MONTH, CARD_EXPIRATION_YEAR).build();
+    CardData cardData =
+        new CardData.Builder(CARD_NUMBER, CARD_EXPIRATION_MONTH, CARD_EXPIRATION_YEAR).build();
 
     return cardData;
   }

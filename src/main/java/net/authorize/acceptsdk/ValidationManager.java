@@ -14,6 +14,7 @@ public class ValidationManager {
   /**
    * Method validates given card number is valid w.r.t Luhn formula
    *
+   * @param cardNumber String
    * @return true if card is valid and false for invalid card.
    */
   public static boolean isValidCardNumber(String cardNumber) {
@@ -61,6 +62,7 @@ public class ValidationManager {
    * Method validates expiration month of card
    *
    * @param month a string in two-digit format
+   * @return true if expiration month is valid and false if invalid.
    */
   public static boolean isValidExpirationMonth(String month) {
 
@@ -77,17 +79,26 @@ public class ValidationManager {
   }
 
   /**
-   * Method validates expiration year
+   * Method validates expiration month of card
    *
-   * @param year a string in four digit format
+   * @param year a string in 4-digit format
+   * @return true if expiration month is valid and false if invalid.
    */
   public static boolean isValidExpirationYear(String year) {
-    if (year == null || year.length() != 4 || (!year.matches("\\d+"))) {
+    if (year == null || (year.length() != 4)) {
       return false;
     }
-
+    if (!year.matches("\\d+")) return false;
     return true;
   }
+
+  /**
+   * Validation for Past date
+   *
+   * @param month two digit string
+   * @param year four digit string
+   * @return true if validation is success, false if fails.
+   */
 
   public static boolean isValidExpirationDate(String month, String year) {
     int currentYear = Calendar.getInstance().get(Calendar.YEAR);
@@ -109,6 +120,7 @@ public class ValidationManager {
    * CVV code should be numeric string and length should be 3 or 4.
    *
    * @param cvvCode a string
+   * @return true if validation is success, false if fails.
    */
   public static boolean isValidCVV(String cvvCode) {
     if (cvvCode == null || (cvvCode.length() < 3 || cvvCode.length() > 4)) {
@@ -126,6 +138,7 @@ public class ValidationManager {
    * zip code length should be between 1 & 20.
    *
    * @param zipCode a string
+   * @return true if validation is success, false if fails.
    */
   public static boolean isValidZipCode(String zipCode) {
     if (zipCode == null || (zipCode.length() < 1 || zipCode.length() > 20)) {
@@ -139,6 +152,7 @@ public class ValidationManager {
    * Card holder name length should be between 1 & 64.
    *
    * @param fullName a string
+   * @return true if validation is success, false if fails.
    */
 
   public static boolean isValidCardHolderName(String fullName) {
@@ -150,24 +164,42 @@ public class ValidationManager {
 
   /* ----------------- Validations related to Finger Print -------------------------*/
 
-  public static boolean isValidAmount(String amount) {
-    if (amount == null || (amount.isEmpty())) {
-      return false;
-    }
+  /**
+   * Method validates amount.
+   * Amount should be positive numbers with 1-2 digit fraction.
+   *
+   * @param amount as double
+   * @return true if validation is success, false if fails.
+   */
+  public static boolean isValidAmount(double amount) {
+
     final String regExp = "[0-9]+([,.][0-9]{1,2})?";
-    if (!amount.matches(regExp)) {
+    String amountString = String.valueOf(amount);
+    if (!amountString.matches(regExp)) {
       return false;
     }
     return true;
-
   }
+
+  /**
+   * Method validates Time stamp.
+   * Amount should be positive numbers.
+   *
+   * @param timestamp as long
+   * @return true if validation is success, false if fails.
+   */
+  public static boolean isValidTimeStamp(long timestamp) {
+    if (timestamp < 0) {
+      return false;
+    }
+    return true;
+  }
+
   /* ----------------- Common Validations-------------------------*/
-  public static boolean isValidString(String string){
+  public static boolean isValidString(String string) {
     if (string == null || (string.isEmpty())) {
       return false;
     }
     return true;
   }
 }
-
-

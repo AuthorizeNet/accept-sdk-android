@@ -1,11 +1,10 @@
 package net.authorize.acceptsdk.parser;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import net.authorize.acceptsdk.datamodel.common.Message;
 import net.authorize.acceptsdk.datamodel.common.ResponseMessages;
+import net.authorize.acceptsdk.datamodel.error.SDKErrorCode;
 import net.authorize.acceptsdk.datamodel.merchant.ClientKeyBasedMerchantAuthentication;
 import net.authorize.acceptsdk.datamodel.merchant.FingerPrintBasedMerchantAuthentication;
 import net.authorize.acceptsdk.datamodel.merchant.FingerPrintData;
@@ -17,7 +16,6 @@ import net.authorize.acceptsdk.datamodel.transaction.response.ErrorTransactionRe
 import net.authorize.acceptsdk.datamodel.transaction.response.TransactionResponse;
 import net.authorize.acceptsdk.util.LogUtil;
 import net.authorize.acceptsdk.util.LogUtil.LOG_LEVEL;
-import net.authorize.acceptsdk.util.SDKUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -60,24 +58,24 @@ public class AcceptSDKParser {
   public static String getJsonFromEncryptTransaction(EncryptTransactionObject transactionObject)
       throws JSONException {
 
-    // Json related to card data
-    JSONObject tokenData = new JSONObject();
+    // Json related to token section
     CardData cardData = transactionObject.getCardData();
+    JSONObject tokenData = new JSONObject();
     tokenData.put(Card.CARD_NUMBER, cardData.getCardNumber());
     tokenData.put(Card.EXPIRATION_DATE, cardData.getExpirationInFormatMMYYYY());
-    //Optional fields
+    //COMMENT: Optional fields
     if (cardData.getCvvCode() != null) tokenData.put(Card.CARD_CODE, cardData.getCvvCode());
     if (cardData.getZipCode() != null) tokenData.put(Card.ZIP, cardData.getZipCode());
     if (cardData.getCardHolderName() != null) {
       tokenData.put(Card.CARD_HOLDER_NAME, cardData.getCardHolderName());
     }
-
+   // Json Related to data section.
     JSONObject data = new JSONObject();
     data.put(TYPE, TYPE_VALUE_TOKEN);
     data.put(ID, transactionObject.getGuid());
     data.put(TOKEN, tokenData);
 
-    // Json related to merchant authentication
+    // Json related to merchant authentication section.
     JSONObject authentication = new JSONObject();
     authentication.put(Authentication.NAME,
         transactionObject.getMerchantAuthentication().getApiLoginID());
@@ -96,6 +94,7 @@ public class AcceptSDKParser {
       FingerPrintData fData = fingerPrintAuth.getFingerPrintData();
       fDataJson.put(FingerPrint.HASH_VALUE, fData.getHashValue());
       fDataJson.put(FingerPrint.TIME_STAMP, fData.getTimestampString());
+
       //Optional fields
       if (fData.getSequence() != null) {
         fDataJson.put(FingerPrint.SEQUENCE, fData.getSequence());
@@ -195,16 +194,27 @@ public class AcceptSDKParser {
         }
     */
 
+    String resultCode = json.getString(RESULT_CODE);
+    boolean isErrorResponse = false;
+    if (resultCode.equals(JSONConstants.ResultCode.ERROR)) isErrorResponse = true;
     ResponseMessages responseMessages = new ResponseMessages(json.getString(RESULT_CODE));
-    responseMessages.setMessageList(parseMessagesList(json.getJSONArray(MESSAGE)));
+    responseMessages.setMessageList(parseMessagesList(isErrorResponse, json.getJSONArray(MESSAGE)));
     return responseMessages;
   }
 
-  private static List<Message> parseMessagesList(JSONArray jsonArray) throws JSONException {
+  private static List<Message> parseMessagesList(boolean isErrorResponse, JSONArray jsonArray)
+      throws JSONException {
+
     int arrayLength = jsonArray.length();
     List<Message> messageList = new ArrayList<Message>(arrayLength);
     for (int index = 0; index < arrayLength; index++) {
-      messageList.add(parseMessage(jsonArray.getJSONObject(index)));
+      Message message = parseMessage(jsonArray.getJSONObject(index));
+      if (isErrorResponse) {    //COMMENT: if response is of error change api error code to E_WC_14.
+        message.setMessageCode(SDKErrorCode.E_WC_14.getErrorCode());
+      } else { //COMMENT: if response is of error change api error code to I_WC_01.
+        message.setMessageCode("I_WC_01");
+      }
+      messageList.add(message);
     }
     return messageList;
   }

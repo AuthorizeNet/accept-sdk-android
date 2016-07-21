@@ -18,17 +18,15 @@ public class ClientKeyBasedMerchantAuthentication extends AbstractMerchantAuthen
   /**
    * Creates a client key authenticator.
    *
-   * @return ClientKeyBasedMerchantAuthentication container
+   * @return ClientKeyBasedMerchantAuthentication Object
    */
   public static ClientKeyBasedMerchantAuthentication createMerchantAuthentication(String loginId,
       String clientKey) {
-    //if (loginId == null || loginId.isEmpty()) {
-    //  throw new AcceptSDKException(AcceptSDKException.APIKEY_ERROR);
-    //}
-    //if (clientKey == null || clientKey.isEmpty()) {
-    //  throw new AcceptSDKException(AcceptSDKException.CLIENTKEY_ERROR);
-    //}
     ClientKeyBasedMerchantAuthentication authenticator = new ClientKeyBasedMerchantAuthentication();
+
+    if (loginId != null) loginId = loginId.trim();
+    if (clientKey != null) clientKey = clientKey.trim();
+
     authenticator.mApiLoginID = loginId;
     authenticator.mClientKey = clientKey;
     authenticator.merchantAuthenticationType = MerchantAuthenticationType.CLIENT_KEY;
@@ -40,18 +38,26 @@ public class ClientKeyBasedMerchantAuthentication extends AbstractMerchantAuthen
     return mClientKey;
   }
 
+
+  /**
+   *  Validates Client key based Merchant Authentication.
+   *
+   * @param callback  {@link ValidationCallback}
+   * @return boolean true, if it is success. false if validation fails.
+   */
   @Override public boolean validateMerchantAuthentication(ValidationCallback callback) {
     if (!ValidationManager.isValidString(mApiLoginID)) {
       callback.OnValidationFailed(
           ErrorTransactionResponse.createErrorResponse(SDKErrorCode.E_WC_10));
       return false;
     }
+
     if (!ValidationManager.isValidString(mClientKey)) {
       callback.OnValidationFailed(
           ErrorTransactionResponse.createErrorResponse(SDKErrorCode.E_WC_18));
       return false;
     }
-    //callback.OnValidationSuccessful();
+
     return true;
   }
 }

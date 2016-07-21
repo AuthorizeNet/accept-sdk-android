@@ -1,10 +1,10 @@
 package net.authorize.acceptsdk.datamodel.transaction;
 
 import junit.framework.Assert;
+import net.authorize.acceptsdk.ValidationCallback;
+import net.authorize.acceptsdk.datamodel.transaction.response.ErrorTransactionResponse;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 /**
  * Created by Kiran Bollepalli on 14,July,2016.
@@ -19,81 +19,110 @@ public class CardDataTest {
   private String zipCode = "bangalore";
   private String cardHolderName = "kiran bollepalli";
 
-  @Before public void setUp() throws Exception {
+  ValidationCallback callBack;
 
+  @Before public void setUp() throws Exception {
+    callBack = new ValidationCallback() {
+      @Override public void OnValidationSuccessful() {
+
+      }
+
+      @Override public void OnValidationFailed(ErrorTransactionResponse errorTransactionResponse) {
+
+      }
+    };
   }
 
-  @Test public void testCardNumber() throws Exception {
+  @Test public void testCardNumberForSuccess() {
     cardNumber = "4111111111111111";
     month = "11";
     year = "2020";
-    CardData card = new CardData.Builder(cardNumber, month, year).build();
-    Assert.assertNotNull(card);
+    CardData card = new CardData.Builder(cardNumber, month, year).setCVVCode("111")
+        .setZipCode("abc")
+        .setCardHolderName("kiran")
+        .build();
+    Assert.assertEquals(true, card.validateCardData(callBack));
   }
 
-  @Rule public ExpectedException expectedException = ExpectedException.none();
+  @Test public void testCardNumberForSuccess2() {
+    cardNumber = "4111111111111111";
+    month = "11";
+    year = "20";
+    CardData card = new CardData.Builder(cardNumber, month, year).build();
+    Assert.assertEquals(true, card.validateCardData(callBack));
+  }
+
+  @Test public void testCardNumberForSuccess3() {
+    cardNumber = "4111111111111111";
+    month = "1";
+    year = "20";
+    CardData card = new CardData.Builder(cardNumber, month, year).build();
+    Assert.assertEquals(true, card.validateCardData(callBack));
+  }
 
   @Test public void testCardNumberForNull() {
     cardNumber = null;
     month = "11";
     year = "2020";
-    // expectedException.expect(AcceptInvalidCardException.class);
-    // expectedException.expectMessage(AcceptInvalidCardException.INVALID_CARD_NUMBER);
     CardData card = new CardData.Builder(cardNumber, month, year).build();
+    Assert.assertEquals(false, card.validateCardData(callBack));
+  }
+
+  @Test public void testMonthForNull() {
+    cardNumber = "4111111111111111";
+    month = null;
+    year = "2020";
+    CardData card = new CardData.Builder(cardNumber, month, year).build();
+    Assert.assertEquals(false, card.validateCardData(callBack));
+  }
+
+  @Test public void testYearForNull() {
+    cardNumber = "4111111111111111";
+    month = "1";
+    year = null;
+    CardData card = new CardData.Builder(cardNumber, month, year).build();
+    Assert.assertEquals(false, card.validateCardData(callBack));
   }
 
   @Test public void testCardNumberMinimumLength() {
     cardNumber = "4111";
     month = "11";
     year = "2020";
-    /// expectedException.expect(AcceptInvalidCardException.class);
-    // expectedException.expectMessage(AcceptInvalidCardException.INVALID_CARD_NUMBER);
     CardData card = new CardData.Builder(cardNumber, month, year).build();
+    Assert.assertEquals(false, card.validateCardData(callBack));
   }
 
   @Test public void testCardNumberMaximumLength() {
     cardNumber = "411111111111111111111111111111111111111";
     month = "11";
     year = "2020";
-    // expectedException.expect(AcceptInvalidCardException.class);
-    // expectedException.expectMessage(AcceptInvalidCardException.INVALID_CARD_NUMBER);
     CardData card = new CardData.Builder(cardNumber, month, year).build();
+    Assert.assertEquals(false, card.validateCardData(callBack));
   }
 
-  @Test public void testCardNumberForChars() {
+  @Test public void testCardNumberForError() {
     cardNumber = "41111AAAAA";
     month = "11";
     year = "2020";
-    // expectedException.expect(AcceptInvalidCardException.class);
-    // expectedException.expectMessage(AcceptInvalidCardException.INVALID_CARD_NUMBER);
     CardData card = new CardData.Builder(cardNumber, month, year).build();
+    Assert.assertEquals(false, card.validateCardData(callBack));
   }
 
   @Test public void testExpirationMonth() {
     cardNumber = "4111111111111111";
     month = "aa";
     year = "2020";
-    // expectedException.expect(AcceptInvalidCardException.class);
-    // expectedException.expectMessage(AcceptInvalidCardException.INVALID_CARD_EXPIRATION_MONTH);
     CardData card = new CardData.Builder(cardNumber, month, year).build();
+    Assert.assertEquals(false, card.validateCardData(callBack));
   }
 
-  @Test public void testCVV() {
-    cardNumber = "4111111111111111";
-    month = "11";
-    year = "2020";
-    cvvCode = "111";
-    CardData card = new CardData.Builder(cardNumber, month, year).setCVVCode(cvvCode).build();
-  }
-
-  @Test public void testCVVForException() {
+  @Test public void testCVVForError() {
     cardNumber = "4111111111111111";
     month = "11";
     year = "2020";
     cvvCode = "111a";
-    // expectedException.expect(AcceptInvalidCardException.class);
-    // expectedException.expectMessage(AcceptInvalidCardException.INVALID_CVV);
     CardData card = new CardData.Builder(cardNumber, month, year).setCVVCode(cvvCode).build();
+    Assert.assertEquals(false, card.validateCardData(callBack));
   }
 
   @Test public void testZip() {
@@ -105,19 +134,19 @@ public class CardDataTest {
     CardData card = new CardData.Builder(cardNumber, month, year).setCVVCode(cvvCode)
         .setZipCode(zipCode)
         .build();
+    Assert.assertEquals(true, card.validateCardData(callBack));
   }
 
-  @Test public void testZipForException() {
+  @Test public void testZipForError() {
     cardNumber = "4111111111111111";
     month = "11";
     year = "2020";
     cvvCode = "111";
-    zipCode = null;
-    //  expectedException.expect(AcceptInvalidCardException.class);
-    //  expectedException.expectMessage(AcceptInvalidCardException.INVALID_ZIP);
+    zipCode = "   ";
     CardData card = new CardData.Builder(cardNumber, month, year).setCVVCode(cvvCode)
         .setZipCode(zipCode)
         .build();
+    Assert.assertEquals(false, card.validateCardData(callBack));
   }
 
   @Test public void testCardHolderName() {
@@ -131,9 +160,10 @@ public class CardDataTest {
         .setZipCode(zipCode)
         .setCardHolderName(cardHolderName)
         .build();
+    Assert.assertEquals(true, card.validateCardData(callBack));
   }
 
-  @Test public void testCardHolderNameForException() {
+  @Test public void testCardHolderNameForError() {
     cardNumber = "4111111111111111";
     month = "11";
     year = "2020";
@@ -142,11 +172,10 @@ public class CardDataTest {
     cardHolderName =
         "kiran bollepalli afafakfhaskjfadjsfjasdfhasdfadsjfdasjfhasdfhasdhfjhadsfhadfhfjadfn"
             + " sdfadffasdfadsfasdfasdfa adsfasdfadsfdasfa";
-    // expectedException.expect(AcceptInvalidCardException.class);
-    // expectedException.expectMessage(AcceptInvalidCardException.INVALID_CARD_HOLDER_NAME);
     CardData card = new CardData.Builder(cardNumber, month, year).setCVVCode(cvvCode)
         .setZipCode(zipCode)
         .setCardHolderName(cardHolderName)
         .build();
+    Assert.assertEquals(false, card.validateCardData(callBack));
   }
 }
