@@ -10,7 +10,7 @@ Add this line to your app's `build.gradle` inside the `dependencies` section as 
 
 ```groovy
     dependencies {
-        compile 'com.authorize:acceptsdk:+'
+        compile 'net.authorize:accept-android-sdk:+'
     }
 ```
 
