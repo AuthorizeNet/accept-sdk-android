@@ -63,7 +63,7 @@ Check out  "Obtaining a Public Client Key" in http://developer.authorize.net/api
 // Parameters: 
 // 1. EncryptTransactionObject - The transaction object for current transaction
 // 2. transaction response callback.
-apiClient.performEncryption(transactionObject, callback);
+apiClient.getTokenWithRequest(transactionObject, callback);
 ```
 
 4) To get a response back, the activity/fragment should implement the `EncryptTransactionCallback` interface.
