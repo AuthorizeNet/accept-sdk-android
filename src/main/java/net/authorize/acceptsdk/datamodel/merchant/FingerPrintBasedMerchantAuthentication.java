@@ -18,6 +18,8 @@ public class FingerPrintBasedMerchantAuthentication extends AbstractMerchantAuth
   /**
    * Creates a client key authenticator.
    *
+   * @param loginId API login id of merchant.
+   * @param fingerPrintData {@link FingerPrintData}
    * @return FingerPrintBasedMerchantAuthentication container
    */
   public static FingerPrintBasedMerchantAuthentication createMerchantAuthentication(String loginId,
@@ -43,9 +45,9 @@ public class FingerPrintBasedMerchantAuthentication extends AbstractMerchantAuth
   }
 
   /**
-   *  Validates Fingerprint based Merchant Authentication.
+   * Validates Fingerprint based Merchant Authentication.
    *
-   * @param callback  {@link ValidationCallback}
+   * @param callback {@link ValidationCallback}
    * @return boolean true, if it is success. false if validation fails.
    */
 

@@ -1,5 +1,6 @@
 package net.authorize.acceptsdk.network;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
@@ -7,6 +8,7 @@ import android.os.ResultReceiver;
 /**
  * Result Receiver for {@link AcceptService}
  */
+@SuppressLint("ParcelCreator")
 public class TransactionResultReceiver extends ResultReceiver {
 
   private Receiver mReceiver;

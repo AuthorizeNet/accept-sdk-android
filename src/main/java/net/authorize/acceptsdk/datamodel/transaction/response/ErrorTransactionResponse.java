@@ -13,6 +13,8 @@ import net.authorize.acceptsdk.util.LogUtil;
 import net.authorize.acceptsdk.util.SDKUtils;
 
 /**
+ * ErrorTransactionResponse class.
+ *
  * Created by Kiran Bollepalli on 15,July,2016.
  * kbollepa@visa.com
  */
@@ -26,7 +28,7 @@ public class ErrorTransactionResponse extends TransactionResponse {
    * Create Error Response from {@link Message} object.
    *
    * @param errorMessage Message Object.
-   * @return {@link ErrorTransactionResponse}
+   * @return ErrorTransactionResponse {@link ErrorTransactionResponse}
    */
   public static ErrorTransactionResponse createErrorResponse(Message errorMessage) {
     ResponseMessages responseMessages = new ResponseMessages(JSONConstants.ResultCode.ERROR);
@@ -39,8 +41,8 @@ public class ErrorTransactionResponse extends TransactionResponse {
    *
    * @param errorCode error Message code.
    * @param errorStream error stream.
-   * @return {@link ErrorTransactionResponse}
-   * @throws IOException
+   * @return ErrorTransactionResponse {@link ErrorTransactionResponse}
+   * @throws IOException parsing exception.
    */
   public static ErrorTransactionResponse createErrorResponse(String errorCode,
       InputStream errorStream) throws IOException {
@@ -56,7 +58,7 @@ public class ErrorTransactionResponse extends TransactionResponse {
    *
    * @param {@link SDKErrorCode} error code.
    * @param errorMessage error message.
-   * @return {@link ErrorTransactionResponse}
+   * @return ErrorTransactionResponse {@link ErrorTransactionResponse}
    */
   public static ErrorTransactionResponse createErrorResponse(SDKErrorCode errorCode,
       String errorMessage) {
@@ -68,7 +70,7 @@ public class ErrorTransactionResponse extends TransactionResponse {
    * Create Error Response
    *
    * @param {@link SDKErrorCode} error code.
-   * @return {@link ErrorTransactionResponse}
+   * @return ErrorTransactionResponse  {@link ErrorTransactionResponse}
    */
   public static ErrorTransactionResponse createErrorResponse(SDKErrorCode errorCode) {
     Message message = new Message(errorCode.getErrorCode(), errorCode.getErrorMessage());

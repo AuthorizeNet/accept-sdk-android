@@ -28,7 +28,6 @@ import static net.authorize.acceptsdk.util.LogUtil.LOG_LEVEL;
 /**
  * Handling asynchronous task requests in
  * a service on a separate handler thread for Accept
- * <p/>
  *
  * Created by Kiran Bollepalli on 07,July,2016.
  * kbollepa@visa.com
@@ -52,6 +51,7 @@ public class AcceptService extends IntentService {
    * Starts this service to perform action ENCRYPT with the given parameters. If
    * the service is already performing a task this action will be queued.
    *
+   * @param context Activity context
    * @param transactionObject - Envelope that will be send to Gateway
    * @param resultReceiver - result receiver to notify the gateway when the service has a result
    * @see IntentService
@@ -106,7 +106,8 @@ public class AcceptService extends IntentService {
       OutputStream os = urlConnection.getOutputStream();
       BufferedWriter writer =
           new BufferedWriter(new OutputStreamWriter(os, Xml.Encoding.UTF_8.name()));
-      writer.write(AcceptSDKParser.getJsonFromEncryptTransaction(transactionObject)); //Json data
+      writer.write(
+          AcceptSDKParser.getOrderedJsonFromEncryptTransaction(transactionObject)); //Json data
       writer.flush();
       writer.close();
       os.close();

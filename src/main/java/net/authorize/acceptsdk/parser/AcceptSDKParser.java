@@ -19,6 +19,7 @@ import net.authorize.acceptsdk.util.LogUtil.LOG_LEVEL;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONStringer;
 import org.json.JSONTokener;
 
 import static net.authorize.acceptsdk.parser.JSONConstants.Authentication;
@@ -53,7 +54,8 @@ public class AcceptSDKParser {
    *
    * @param transactionObject encryption transaction Object. Also see {@link
    * EncryptTransactionObject}
-   * @throws JSONException
+   * @return String json String
+   * @throws JSONException, exception will be thrown when creation of Json fails.
    */
   public static String getJsonFromEncryptTransaction(EncryptTransactionObject transactionObject)
       throws JSONException {
@@ -69,7 +71,7 @@ public class AcceptSDKParser {
     if (cardData.getCardHolderName() != null) {
       tokenData.put(Card.CARD_HOLDER_NAME, cardData.getCardHolderName());
     }
-   // Json Related to data section.
+    // Json Related to data section.
     JSONObject data = new JSONObject();
     data.put(TYPE, TYPE_VALUE_TOKEN);
     data.put(ID, transactionObject.getGuid());
@@ -120,13 +122,99 @@ public class AcceptSDKParser {
   }
 
   /**
+   * Method create Json Object for Encryption API call. Using this method order of insertion is
+   * preserved.
+   *
+   * @param transactionObject encryption transaction Object. Also see {@link
+   * EncryptTransactionObject}
+   * @return String json String
+   * @throws JSONException, exception will be thrown when creation of Json fails.
+   */
+  public static String getOrderedJsonFromEncryptTransaction(
+      EncryptTransactionObject transactionObject) throws JSONException {
+
+    // Json related to token section
+    CardData cardData = transactionObject.getCardData();
+
+    JSONStringer stringer = new JSONStringer().object();
+    stringer.key(CONTAINER_REQUEST).object();
+    prepareJsonForAuthenticationSection(stringer, transactionObject);
+    stringer.key(DATA).object(); //Data section
+    stringer.key(TYPE).value(TYPE_VALUE_TOKEN);
+    stringer.key(ID).value(transactionObject.getGuid());
+    prepareJsonForTokenSection(stringer, cardData);
+    stringer.endObject();
+    stringer.endObject();
+    stringer.endObject();
+
+    LogUtil.log(LOG_LEVEL.INFO, "getJsonFromEncryptTransaction : " + stringer.toString());
+    return stringer.toString();
+  }
+
+  public static void prepareJsonForTokenSection(JSONStringer stringer, CardData cardData)
+      throws JSONException {
+    stringer.key(TOKEN).object();
+    stringer.key(Card.CARD_NUMBER).value(cardData.getCardNumber());
+    stringer.key(Card.EXPIRATION_DATE).value(cardData.getExpirationInFormatMMYYYY());
+    if (cardData.getCvvCode() != null) stringer.key(Card.CARD_CODE).value(cardData.getCvvCode());
+    if (cardData.getZipCode() != null) stringer.key(Card.ZIP).value(cardData.getZipCode());
+    if (cardData.getCardHolderName() != null) {
+      stringer.key(Card.CARD_HOLDER_NAME).value(cardData.getCardHolderName());
+    }
+    stringer.endObject();
+  }
+
+  public static void prepareJsonForAuthenticationSection(JSONStringer stringer,
+      EncryptTransactionObject transactionObject) throws JSONException {
+    String clientKey = null;
+    FingerPrintData fData = null;
+    String apiLoginId = transactionObject.getMerchantAuthentication().getApiLoginID();
+    MerchantAuthenticationType authenticationType =
+        transactionObject.getMerchantAuthentication().getMerchantAuthenticationType();
+    if (authenticationType == MerchantAuthenticationType.CLIENT_KEY) {
+      ClientKeyBasedMerchantAuthentication clientKeyAuth =
+          (ClientKeyBasedMerchantAuthentication) transactionObject.getMerchantAuthentication();
+      clientKey = clientKeyAuth.getClientKey();
+    } else if (authenticationType == MerchantAuthenticationType.FINGERPRINT) {
+      FingerPrintBasedMerchantAuthentication fingerPrintAuth =
+          (FingerPrintBasedMerchantAuthentication) transactionObject.getMerchantAuthentication();
+      fData = fingerPrintAuth.getFingerPrintData();
+    }
+    stringer.key(MERCHANT_AUTHENTICATION).object(); //Merchant Authentication section
+    stringer.key(Authentication.NAME).value(apiLoginId);
+    if (clientKey != null) {
+      stringer.key(Authentication.CLIENT_KEY).value(clientKey);
+    } else if (fData != null) {
+      prepareJsonForFingerPrintSection(stringer, fData);
+    }
+
+    stringer.endObject();
+  }
+
+  public static void prepareJsonForFingerPrintSection(JSONStringer stringer, FingerPrintData fData)
+      throws JSONException {
+    stringer.key(Authentication.FINGER_PRINT).object(); //Fingerprint section
+    stringer.key(FingerPrint.HASH_VALUE).value(fData.getHashValue());
+    stringer.key(FingerPrint.TIME_STAMP).value(fData.getTimestampString());
+    if (fData.getSequence() != null) stringer.key(FingerPrint.SEQUENCE).value(fData.getSequence());
+    if (fData.getCurrencyCode() != null) {
+      stringer.key(FingerPrint.CURRENCY_CODE).value(fData.getCurrencyCode());
+    }
+    if (fData.getAmountString() != null) {
+      stringer.key(FingerPrint.AMOUNT).value(fData.getAmountString());
+    }
+    stringer.endObject();
+  }
+
+  /**
    * Method parses Json response and creates Transaction Response Object.
    * If transaction is successful, It creates {@link EncryptTransactionResponse} object.
    * If transaction is unsuccessful, it creates {@link TransactionResponse} Object which contains
    * error messages.
    *
+   * @param json jsonString
    * @return TransactionResponse
-   * @throws JSONException
+   * @throws JSONException Json Parsing exception.
    */
   public static TransactionResponse createEncryptionTransactionResponse(String json)
       throws JSONException {

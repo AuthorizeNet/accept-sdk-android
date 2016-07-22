@@ -18,6 +18,8 @@ public class ClientKeyBasedMerchantAuthentication extends AbstractMerchantAuthen
   /**
    * Creates a client key authenticator.
    *
+   * @param loginId API login id of merchant.
+   * @param clientKey public client key of merchant
    * @return ClientKeyBasedMerchantAuthentication Object
    */
   public static ClientKeyBasedMerchantAuthentication createMerchantAuthentication(String loginId,
@@ -38,11 +40,10 @@ public class ClientKeyBasedMerchantAuthentication extends AbstractMerchantAuthen
     return mClientKey;
   }
 
-
   /**
-   *  Validates Client key based Merchant Authentication.
+   * Validates Client key based Merchant Authentication.
    *
-   * @param callback  {@link ValidationCallback}
+   * @param callback {@link ValidationCallback}
    * @return boolean true, if it is success. false if validation fails.
    */
   @Override public boolean validateMerchantAuthentication(ValidationCallback callback) {

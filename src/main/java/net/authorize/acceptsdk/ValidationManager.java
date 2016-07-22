@@ -135,7 +135,7 @@ public class ValidationManager {
 
   /**
    * Method validates zip code of card.
-   * zip code length should be between 1 & 20.
+   * zip code length should be between 1 &amp; 20.
    *
    * @param zipCode a string
    * @return true if validation is success, false if fails.
@@ -149,7 +149,7 @@ public class ValidationManager {
 
   /**
    * Method validates card holder name.
-   * Card holder name length should be between 1 & 64.
+   * Card holder name length should be between 1 &amp; 64.
    *
    * @param fullName a string
    * @return true if validation is success, false if fails.
