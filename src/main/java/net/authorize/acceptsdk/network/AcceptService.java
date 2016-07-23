@@ -28,7 +28,6 @@ import static net.authorize.acceptsdk.util.LogUtil.LOG_LEVEL;
 /**
  * Handling asynchronous task requests in
  * a service on a separate handler thread for Accept
- * <p/>
  *
  * Created by Kiran Bollepalli on 07,July,2016.
  * kbollepa@visa.com
@@ -52,6 +51,7 @@ public class AcceptService extends IntentService {
    * Starts this service to perform action ENCRYPT with the given parameters. If
    * the service is already performing a task this action will be queued.
    *
+   * @param context Activity context
    * @param transactionObject - Envelope that will be send to Gateway
    * @param resultReceiver - result receiver to notify the gateway when the service has a result
    * @see IntentService
@@ -106,7 +106,8 @@ public class AcceptService extends IntentService {
       OutputStream os = urlConnection.getOutputStream();
       BufferedWriter writer =
           new BufferedWriter(new OutputStreamWriter(os, Xml.Encoding.UTF_8.name()));
-      writer.write(AcceptSDKParser.getJsonFromEncryptTransaction(transactionObject)); //Json data
+      writer.write(
+          AcceptSDKParser.getOrderedJsonFromEncryptTransaction(transactionObject)); //Json data
       writer.flush();
       writer.close();
       os.close();
@@ -124,29 +125,27 @@ public class AcceptService extends IntentService {
          *   > If it is "Error" that means transaction is failed.
          */
         if (response.getResultCode().equals(ResultCode.OK)) {
-          resultObject = (EncryptTransactionResponse) response;
+          resultObject = response;
         } else { //Error case
-          resultObject = (ErrorTransactionResponse) response;
+          resultObject = response;
         }
       } else if (responseCode == HttpsURLConnection.HTTP_INTERNAL_ERROR) {
         resultObject =
-            AcceptSDKParser.createErrorResponse(responseCode, urlConnection.getErrorStream());
+            ErrorTransactionResponse.createErrorResponse(SDKErrorCode.E_WC_02.getErrorCode(),
+                urlConnection.getErrorStream());
       } else {
-        resultObject = ErrorTransactionResponse.createErrorResponse(
-            SDKErrorCode.SDK_INTERNAL_ERROR_NETWORK_CONNECTION);
+        //FIXME: Need to revisit this code. To map to  appropriate error.
+        resultObject = ErrorTransactionResponse.createErrorResponse(SDKErrorCode.E_WC_02);
       }
     } catch (SocketTimeoutException e) {
-      e.printStackTrace();
-      resultObject = ErrorTransactionResponse.createErrorResponse(
-          SDKErrorCode.SDK_INTERNAL_ERROR_NETWORK_CONNECTION_TIMEOUT);
-    } catch (IOException e) {
-      e.printStackTrace();
-      resultObject = ErrorTransactionResponse.createErrorResponse(
-          SDKErrorCode.SDK_INTERNAL_ERROR_NETWORK_CONNECTION);
-    } catch (JSONException e) {
-      e.printStackTrace();
       resultObject =
-          ErrorTransactionResponse.createErrorResponse(SDKErrorCode.SDK_INTERNAL_ERROR_PARSING);
+          ErrorTransactionResponse.createErrorResponse(SDKErrorCode.E_WC_02, e.getMessage());
+    } catch (IOException e) {
+      resultObject =
+          ErrorTransactionResponse.createErrorResponse(SDKErrorCode.E_WC_02, e.getMessage());
+    } catch (JSONException e) {
+      resultObject =
+          ErrorTransactionResponse.createErrorResponse(SDKErrorCode.E_WC_14, e.getMessage());
     }
     return resultObject;
   }

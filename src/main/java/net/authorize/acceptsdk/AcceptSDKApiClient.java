@@ -4,7 +4,6 @@ import android.content.Context;
 import java.lang.ref.WeakReference;
 import net.authorize.acceptsdk.datamodel.transaction.EncryptTransactionObject;
 import net.authorize.acceptsdk.datamodel.transaction.callbacks.EncryptTransactionCallback;
-import net.authorize.acceptsdk.exception.AcceptSDKException;
 import net.authorize.acceptsdk.internal.AcceptSDKCore;
 import net.authorize.acceptsdk.network.ConnectionData;
 
@@ -59,12 +58,15 @@ public class AcceptSDKApiClient {
    * NullPointerException}
    * @param callback callback for response of transaction
    * @return boolean, false if another transaction is already in progress.
-   * @throws AcceptSDKException, If transactionObject is null. Also see {@link AcceptSDKException}
    */
-  public boolean performEncryption(EncryptTransactionObject transactionObject,
-      EncryptTransactionCallback callback) throws AcceptSDKException {
+  public boolean getTokenWithRequest(EncryptTransactionObject transactionObject,
+      EncryptTransactionCallback callback) {
     if (transactionObject == null) {
-      throw new AcceptSDKException(AcceptSDKException.NULL_TRANSACTION_OBJECT);
+      throw new NullPointerException("Transaction Object must not be null");
+    }
+
+    if (callback == null) {
+      throw new NullPointerException("Transaction Callback must not be null");
     }
     return AcceptSDKCore.getInstance().performEncryption(transactionObject, callback);
   }
@@ -83,11 +85,10 @@ public class AcceptSDKApiClient {
      * @param context activity from where api is getting called.
      * @param environment sandbox or production. If this parameter is null by default environment
      * is sandbox.
-     * @throws AcceptSDKException, If context is null. Also see {@link AcceptSDKException}
      */
 
-    public Builder(Context context, Environment environment) throws AcceptSDKException {
-      if (context == null) throw new AcceptSDKException(AcceptSDKException.NULL_CONTEXT);
+    public Builder(Context context, Environment environment) {
+      if (context == null) throw new NullPointerException("Context must not be null");
       this.context = new WeakReference<>(context);
       this.environment = (environment == null) ? Environment.SANDBOX : environment;
     }
