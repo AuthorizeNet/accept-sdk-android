@@ -8,25 +8,15 @@ package net.authorize.acceptsdk.network;
  */
 public class ConnectionData {
 
+  /**
+   * End point url for Sandbox.
+   */
   public static final String ENDPOINT_SANDBOX = "https://apitest.authorize.net/xml/v1/request.api ";
-  public static final String ENDPOINT_PRODUCTION = "https://api.authorize.net/xml/v1/request.api ";
 
   /**
-   * Port for HTTPS communication.
+   * End point url for Production.
    */
-  public static final int DEFAULT_HTTPS_PORT = 443;
-  /**
-   * Port for HTTP communication
-   */
-  public static final int DEFAULT_HTTP_PORT = 80;
-  /**
-   * Name of HTTPS.
-   */
-  public static final String HTTPS_NAME = "https";
-  /**
-   * Name of HTTP.
-   */
-  public static final String HTTP_NAME = "http";
+  public static final String ENDPOINT_PRODUCTION = "https://api.authorize.net/xml/v1/request.api ";
 
   /**
    * Label for content-type header.

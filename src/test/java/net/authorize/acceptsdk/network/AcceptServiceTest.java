@@ -1,20 +1,14 @@
 package net.authorize.acceptsdk.network;
 
+import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.test.ServiceTestCase;
-import net.authorize.acceptsdk.AcceptSDKApiClient;
+import android.test.mock.MockContext;
 import net.authorize.acceptsdk.datamodel.merchant.ClientKeyBasedMerchantAuthentication;
 import net.authorize.acceptsdk.datamodel.transaction.CardData;
 import net.authorize.acceptsdk.datamodel.transaction.EncryptTransactionObject;
 import net.authorize.acceptsdk.datamodel.transaction.TransactionType;
-import net.authorize.acceptsdk.exception.AcceptInvalidCardException;
-import net.authorize.acceptsdk.exception.AcceptSDKException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by Kiran Bollepalli on 14,July,2016.
@@ -29,24 +23,41 @@ public class AcceptServiceTest extends ServiceTestCase<AcceptService> {
   private final String CLIENT_KEY =
       "6gSuV295YD86Mq4d86zEsx8C839uMVVjfXm9N4wr6DRuhTHpDU97NFyKtfZncUq8";
   private final String API_LOGIN_ID = "6AB64hcB";
+  TransactionResultReceiver mResultReceiver;
+  Context context = new MockContext();
 
   public AcceptServiceTest() {
     super(AcceptService.class);
   }
+
   public AcceptServiceTest(Class<AcceptService> serviceClass) {
     super(serviceClass);
   }
 
-  @
+  @Override public void setupService() {
+    super.setupService();
 
-  @Test public void testStartActionEncrypt() throws Exception {
-    AcceptService.startActionEncrypt(AcceptSDKApiClient.getContext().get(), prepareTransactionObject(),
-        null);
+    registerResultReceiver();
   }
 
+  private void registerResultReceiver() {
+    if (mResultReceiver != null) return;
+    mResultReceiver = new TransactionResultReceiver(new Handler());
+  }
 
+  public void testStartActionEncrypt() throws Exception {
+    AcceptService.startActionEncrypt(context, prepareTransactionObject(), mResultReceiver);
+    //assertNotNull(getService());
+  }
 
-  private EncryptTransactionObject prepareTransactionObject() throws AcceptSDKException {
+  public void testOnHandleIntent() throws Exception {
+    Intent intent = new Intent(getSystemContext(), AcceptService.class);
+    intent.setAction(AcceptService.ACTION_ENCRYPT);
+    startService(intent);
+    //assertNotNull(getService());
+  }
+
+  private EncryptTransactionObject prepareTransactionObject() {
     ClientKeyBasedMerchantAuthentication merchantAuthentication =
         ClientKeyBasedMerchantAuthentication.
             createMerchantAuthentication(API_LOGIN_ID, CLIENT_KEY);
@@ -60,14 +71,9 @@ public class AcceptServiceTest extends ServiceTestCase<AcceptService> {
   }
 
   private CardData prepareTestCardData() {
-    CardData cardData = null;
-    try {
-      cardData =
-          new CardData.Builder(CARD_NUMBER, CARD_EXPIRATION_MONTH, CARD_EXPIRATION_YEAR).build();
-    } catch (AcceptInvalidCardException e) {
-      // Handle exception if the card is invalid
-      e.printStackTrace();
-    }
+    CardData cardData =
+        new CardData.Builder(CARD_NUMBER, CARD_EXPIRATION_MONTH, CARD_EXPIRATION_YEAR).build();
+
     return cardData;
   }
 }

@@ -2,8 +2,7 @@ package net.authorize.acceptsdk.util;
 
 /**
  * Enumeration describing available currencies:
- * <p>
- * </p>
+ *
  * Available currencies:
  * <ul>
  * <li>CAD ( $ )</li>

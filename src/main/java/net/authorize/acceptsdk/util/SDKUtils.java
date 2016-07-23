@@ -1,21 +1,12 @@
 package net.authorize.acceptsdk.util;
 
+import android.annotation.SuppressLint;
 import android.text.TextUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.RoundingMode;
-import java.net.Socket;
 import java.net.URL;
-import java.net.UnknownHostException;
-import java.security.KeyManagementException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -23,11 +14,6 @@ import java.util.GregorianCalendar;
 import java.util.Scanner;
 import java.util.TimeZone;
 import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import net.authorize.acceptsdk.util.SDKCurrency;
-import org.apache.http.conn.ssl.SSLSocketFactory;
 
 /**
  * This class provides static common methods to be used by other classes in the
@@ -35,9 +21,6 @@ import org.apache.http.conn.ssl.SSLSocketFactory;
  */
 
 public class SDKUtils {
-
-  private final static String CERTIFICATES = "certificates";
-  private final static String CERT_EXT = ".cer";
 
   /** Format of 'date': yyyy-MM-dd */
   private final static String DATE_FORMAT = "yyyy-MM-dd";
@@ -65,7 +48,6 @@ public class SDKUtils {
 
   /** Port: 443 */
   private final static int PORT_443 = 443;
-
 
   /**
    * Converts given InputStream to String
@@ -98,18 +80,20 @@ public class SDKUtils {
     } else {
       timeZone = TimeZone.getTimeZone(DEFAULT_TIMEZONE);
     }
-    SimpleDateFormat sdf = new SimpleDateFormat(BASIC_DATE_FORMAT);
+    @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf =
+        new SimpleDateFormat(BASIC_DATE_FORMAT);
     sdf.setTimeZone(timeZone);
     Date date = new Date(time);
     String input = sdf.format(date); // here we have UTC time
     GregorianCalendar cal = new GregorianCalendar(utc);
     // now we try to parse it to local time
     try {
-      SimpleDateFormat s = new SimpleDateFormat(BASIC_DATE_FORMAT);
+      @SuppressLint("SimpleDateFormat") SimpleDateFormat s =
+          new SimpleDateFormat(BASIC_DATE_FORMAT);
       s.setTimeZone(utc);
       cal.setTime(s.parse(input));
       Date date2 = new Date(cal.getTime().getTime());
-      SimpleDateFormat simpleDate = new SimpleDateFormat(format);
+      @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDate = new SimpleDateFormat(format);
       return simpleDate.format(date2);
     } catch (ParseException e) {
       // return UTC time if parse failed
@@ -127,13 +111,13 @@ public class SDKUtils {
 
   private static String getTime(String input, String format) {
     TimeZone utc = TimeZone.getTimeZone(UTC_TIMEZONE);
-    SimpleDateFormat f = new SimpleDateFormat(BASIC_DATE_FORMAT);
+    @SuppressLint("SimpleDateFormat") SimpleDateFormat f = new SimpleDateFormat(BASIC_DATE_FORMAT);
     f.setTimeZone(utc);
     GregorianCalendar cal = new GregorianCalendar(utc);
     try {
       cal.setTime(f.parse(input));
       Date date = new Date(cal.getTime().getTime());
-      SimpleDateFormat simpleDate = new SimpleDateFormat(format);
+      @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDate = new SimpleDateFormat(format);
       return simpleDate.format(date);
     } catch (ParseException e) {
       return input;
@@ -151,7 +135,6 @@ public class SDKUtils {
     }
     return result;
   }
-
 
   public static HttpsURLConnection getHttpsURLConnection(String urlString, String requestMethod,
       boolean doOutput) throws IOException {
@@ -188,6 +171,7 @@ public class SDKUtils {
    * Convert BigDecimal amount value to String
    *
    * @param value the amount in Big Decimal to be converted
+   * @return String, Amount in string format.
    */
   public static String getAmountStringFromBigDecimal(BigDecimal value) {
     BigDecimal amount = value.setScale(2, RoundingMode.CEILING);
