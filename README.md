@@ -1,34 +1,48 @@
 # Accept Android SDK
 
-## SDK Installation
+This SDK is Android version of [Accept JS](http://developer.authorize.net/api/reference/features/acceptjs.html). This SDK is used to fetch token for given Card cata.
 
-Android Studio is preferred because Eclipse will not be supported by Google much longer.
+## Contents
 
-### Android Studio (or Gradle)
+1. [Installation](#installation-one-step)
+1. [Getting Started](#getting-started-four-steps)
+1. [Running the Demo App](#running-the-demo-app)
 
-Add this line to your app's `build.gradle` inside the `dependencies` section as follows:
+## Installation (One Step)
+Add the dependency from jCenter to your app's (not project) `build.gradle` file.
 
 ```groovy
-    dependencies {
-        compile 'net.authorize:accept-android-sdk:+'
-    }
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'net.authorize:accept-android-sdk:+'
+}
 ```
 
-## SDK Usage
-After the installation is succesfully complete, perform the following steps to program an Android app with this SDK.
+## Getting Started (Four Steps)
 
-1) To initiate requests with the SDK, create an API client that will make API requests on your behalf. The Accept SDK API client can be built as follows:
+### Prerequisites
+
+1. Android API 14+ is required as the `minSdkVersion` in your build.gradle
+
+
+### 1. Initialize AcceptSDKApiClient
+
+ To initiate requests with the SDK, create an API client that will make API requests on your behalf. The Accept SDK API client can be built as follows:
 
 ```java
 // Parameters:
-// 1) Context - current context
+// 1) Context - Activity context
 // 2) AcceptSDKApiClient.Environment - AUTHORIZE.NET ENVIRONMENT
 apiClient = new AcceptSDKApiClient.Builder (getActivity(),
                                           AcceptSDKApiClient.Environment.SANDBOX) 
                                           .sdkConnectionTimeout(5000) // optional connection time out in milliseconds
                                           .build();
 ```
-2) To make the API call, you can create a Encryption transaction object as follows:
+### 2. Prepare Objects rquired to call Token API
+ To make the Fetch token API call, you can create a Encryption transaction object as follows:
 
 ```java
  EncryptTransactionObject transactionObject = TransactionObject.
@@ -57,7 +71,10 @@ ClientKeyBasedMerchantAuthentication merchantAuthentication = ClientKeyBasedMerc
 ```
 Check out  "Obtaining a Public Client Key" in http://developer.authorize.net/api/reference/features/acceptjs.html to get CLIENT_KEY.
 
-3) When the API client and transaction information are ready, you can make a call to perform a specific API.
+
+### 3. Calling Token API
+
+When transaction information are ready, you can make following call to fetch token.
 
 ```java
 // Parameters: 
@@ -66,7 +83,9 @@ Check out  "Obtaining a Public Client Key" in http://developer.authorize.net/api
 apiClient.getTokenWithRequest(transactionObject, callback);
 ```
 
-4) To get a response back, the activity/fragment should implement the `EncryptTransactionCallback` interface.
+### 4. Implement  EncryptTransactionCallback Interface.
+
+To get a response back, the activity/fragment should implement the `EncryptTransactionCallback` interface. It has following methods.
 
 ```java
 @Override
@@ -78,6 +97,10 @@ public void onEncryptionFinished(EncryptTransactionResponse response)
                  .show();
 }
 ```
+"onEncryptionFinished" method will be called when token is successfully generated.
+response.getDataDescriptor() returns  "COMMON.ACCEPT.INAPP.PAYMENT" 
+and response.getDataValue()  returns Token data Ex: 9469429169768019305001
+This information are used to perform Payment transaction.
 **OR**
 
 In case of an error:
@@ -93,8 +116,15 @@ public void onErrorReceived(ErrorTransactionResponse errorResponse)
                  .show();
 }
 ```
+"onErrorReceived" method will be called in three senarios,
+ 1. Validation of information is failed.
+ 2. Network related errors.
+ 3. API error response.
+ "ErrorTransactionResponse" may contain one or more error messages.
 
-##Sample Application
-We have a sample application which demonstrates the SDK usage:  
+🎉**Congratulations, you're using Accept SDK on Android!** 👏
+
+## Running the Demo App
+ We have a sample application which demonstrates the SDK usage:  
    https://github.com/AuthorizeNet/accept-sample-android
 
