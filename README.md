@@ -6,7 +6,7 @@ This SDK is Android version of [Accept JS](http://developer.authorize.net/api/re
 
 1. [Installation](#installation-one-step)
 1. [Getting Started](#getting-started-four-steps)
-1. [Demo Applcation](#running-the-demo-app)
+1. [Demo Applcation](#demo-applcation)
 
 ## Installation (One Step)
 Add the dependency from jCenter to your app's (not project) `build.gradle` file.
