@@ -1,6 +1,7 @@
 package net.authorize.acceptsdk.util;
 
 import android.util.Log;
+import net.authorize.acceptsdk.BuildConfig;
 
 /**
  * Utility class for Logging.
@@ -23,8 +24,8 @@ public final class LogUtil {
   ;
 
   public static void log(LOG_LEVEL level, String message) {
-    //TODO: Need to enable this in at release time
-    //if (!BuildConfig.DEBUG) return;
+
+    if (!BuildConfig.DEBUG) return;
 
     if (level == LOG_LEVEL.VERBOSE) {
       Log.v(LOG_TAG, message);

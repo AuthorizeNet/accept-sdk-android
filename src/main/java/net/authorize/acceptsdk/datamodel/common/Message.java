@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 /**
  * POJO Class of message section from server response.
+ *
  * Created by Kiran Bollepalli on 12,July,2016.
  * kbollepa@visa.com
  */
