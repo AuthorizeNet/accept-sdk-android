@@ -30,7 +30,7 @@ dependencies {
 
 ### 1. Initialize AcceptSDKApiClient
 
- All SDK APi's will be accessed through AcceptSDKApiClient Object. It can be created as follows:
+ All SDK APi's will be accessed through `AcceptSDKApiClient` Object. It can be created as follows:
 
 ```java
 // Parameters:
@@ -42,7 +42,7 @@ apiClient = new AcceptSDKApiClient.Builder (getActivity(),
                                           .build();
 ```
 ### 2. Prepare Objects rquired to call Token API
- Fetch token API require EncryptTransactionObject and it can be created as follows:
+ Fetch token API require `EncryptTransactionObject` and it can be created as follows:
 
 ```java
  EncryptTransactionObject transactionObject = TransactionObject.
@@ -51,7 +51,7 @@ apiClient = new AcceptSDKApiClient.Builder (getActivity(),
         .merchantAuthentication(prepareMerchantAuthentication()) //Merchant authentication
         .build();
 ```
-EncryptTransactionObject require CardData object and it can be created as follows:
+`EncryptTransactionObject` require CardData object and it can be created as follows:
 
 ```java
 CardData cardData = new CardData.Builder(CARD_NUMBER,
@@ -63,7 +63,7 @@ CardData cardData = new CardData.Builder(CARD_NUMBER,
                                                .build();
 ```
 
-EncryptTransactionObject require Merchant Authentication object and it can be created as follows:
+`EncryptTransactionObject` require Merchant Authentication object and it can be created as follows:
 
 ```java
 ClientKeyBasedMerchantAuthentication merchantAuthentication = ClientKeyBasedMerchantAuthentication.
@@ -94,7 +94,7 @@ To get a response back, the activity/fragment should implement the `EncryptTrans
 
 ### onEncryptionFinished() 
 
-   This method will be called when token is successfully generated. EncryptTransactionResponse object has Data Descriptor and Data value details which will be used to perform payment transaction.
+   This method will be called when token is successfully generated.`EncryptTransactionResponse` object has Data Descriptor and Data value details which will be used to perform payment transaction.
    
 ```java
 @Override
@@ -114,7 +114,7 @@ public void onEncryptionFinished(EncryptTransactionResponse response)
      > Network related errors.
      > API error response.
      
- "ErrorTransactionResponse" may contain one or more error messages.
+ `ErrorTransactionResponse` may contain one or more error messages.
 
 ```java
 @Override
