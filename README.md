@@ -87,10 +87,12 @@ apiClient.getTokenWithRequest(transactionObject, callback);
 ### 4. Implement  EncryptTransactionCallback Interface.
 
 To get a response back, the activity/fragment should implement the `EncryptTransactionCallback` interface. It has following methods.
+
 1. [onEncryptionFinished](#onEncryption-Finished)
 1. [onErrorReceived](#onError-Received)
 
 ### onEncryptionFinished() 
+
    This method will be called when token is successfully generated. EncryptTransactionResponse object has Data Descriptor and Data value details which will be used to perform payment transaction.
    
 ```java
@@ -106,9 +108,11 @@ public void onEncryptionFinished(EncryptTransactionResponse response)
 ### onErrorReceived()
 
    This  method will be called in three senarios,
+   
      > Validation of information is failed.
      > Network related errors.
      > API error response.
+     
  "ErrorTransactionResponse" may contain one or more error messages.
 
 ```java
