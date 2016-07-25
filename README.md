@@ -6,7 +6,7 @@ This SDK is Android version of [Accept JS](http://developer.authorize.net/api/re
 
 1. [Installation](#installation-one-step)
 1. [Getting Started](#getting-started-four-steps)
-1. [Running the Demo App](#running-the-demo-app)
+1. [Demo Applcation](#running-the-demo-app)
 
 ## Installation (One Step)
 Add the dependency from jCenter to your app's (not project) `build.gradle` file.
@@ -69,7 +69,8 @@ Merchant Authentication can be created as follows:
 ClientKeyBasedMerchantAuthentication merchantAuthentication = ClientKeyBasedMerchantAuthentication.
                 createMerchantAuthentication(API_LOGIN_ID, CLIENT_KEY);
 ```
-Check out  "Obtaining a Public Client Key" in http://developer.authorize.net/api/reference/features/acceptjs.html to get CLIENT_KEY.
+Check out "Obtaining a Public Client Key" section in http://developer.authorize.net/api/reference/features/acceptjs.html 
+to get CLIENT_KEY.
 
 
 ### 3. Calling Token API
@@ -98,12 +99,9 @@ public void onEncryptionFinished(EncryptTransactionResponse response)
 }
 ```
 "onEncryptionFinished" method will be called when token is successfully generated.
-response.getDataDescriptor() returns  "COMMON.ACCEPT.INAPP.PAYMENT" 
-and response.getDataValue()  returns Token data Ex: 9469429169768019305001
+    response.getDataDescriptor() returns  "COMMON.ACCEPT.INAPP.PAYMENT" 
+    response.getDataValue()  returns Token data Ex: 9469429169768019305001
 This information are used to perform Payment transaction.
-**OR**
-
-In case of an error:
 
 ```java
 @Override
@@ -124,7 +122,7 @@ public void onErrorReceived(ErrorTransactionResponse errorResponse)
 
 🎉**Congratulations, you're using Accept SDK on Android!** 👏
 
-## Running the Demo App
- We have a sample application which demonstrates the SDK usage:  
+## Demo Applcation
+ We have a demo application which demonstrates the SDK usage:  
    https://github.com/AuthorizeNet/accept-sample-android
 
