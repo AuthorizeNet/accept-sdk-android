@@ -1,6 +1,6 @@
 # Accept Android SDK
 
-This SDK is Android version of [Accept JS](http://developer.authorize.net/api/reference/features/acceptjs.html). This SDK is used to fetch token for given Card cata.
+This SDK is Android version of [Accept JS](http://developer.authorize.net/api/reference/features/acceptjs.html). This SDK is used to fetch token for given Payment Information.
 
 ## Contents
 
@@ -25,12 +25,12 @@ dependencies {
 
 ### Prerequisites
 
-1. Android API 14+ is required as the `minSdkVersion` in your build.gradle
+ Android API 14+ is required as the `minSdkVersion` in your build.gradle
 
 
 ### 1. Initialize AcceptSDKApiClient
 
- To initiate requests with the SDK, create an API client that will make API requests on your behalf. The Accept SDK API client can be built as follows:
+ All SDK APi's will be accessed through AcceptSDKApiClient Object. It can be created as follows:
 
 ```java
 // Parameters:
@@ -42,7 +42,7 @@ apiClient = new AcceptSDKApiClient.Builder (getActivity(),
                                           .build();
 ```
 ### 2. Prepare Objects rquired to call Token API
- To make the Fetch token API call, you can create a Encryption transaction object as follows:
+ Fetch token API require EncryptTransactionObject and it can be created as follows:
 
 ```java
  EncryptTransactionObject transactionObject = TransactionObject.
@@ -51,7 +51,7 @@ apiClient = new AcceptSDKApiClient.Builder (getActivity(),
         .merchantAuthentication(prepareMerchantAuthentication()) //Merchant authentication
         .build();
 ```
-A card object can be created as follows:
+EncryptTransactionObject rquire CardData object and it can be created as follows:
 
 ```java
 CardData cardData = new CardData.Builder(CARD_NUMBER,
@@ -63,14 +63,14 @@ CardData cardData = new CardData.Builder(CARD_NUMBER,
                                                .build();
 ```
 
-Merchant Authentication can be created as follows:
+EncryptTransactionObject rquire Merchant Authentication object and it can be created as follows:
 
 ```java
 ClientKeyBasedMerchantAuthentication merchantAuthentication = ClientKeyBasedMerchantAuthentication.
                 createMerchantAuthentication(API_LOGIN_ID, CLIENT_KEY);
 ```
-Check out "Obtaining a Public Client Key" section in http://developer.authorize.net/api/reference/features/acceptjs.html 
-to get CLIENT_KEY.
+Check out "Obtaining a Public Client Key" section in [Accept JS](http://developer.authorize.net/api/reference/features/acceptjs.html) 
+to get more information getting CLIENT_KEY.
 
 
 ### 3. Calling Token API
@@ -87,6 +87,14 @@ apiClient.getTokenWithRequest(transactionObject, callback);
 ### 4. Implement  EncryptTransactionCallback Interface.
 
 To get a response back, the activity/fragment should implement the `EncryptTransactionCallback` interface. It has following methods.
+ * [onEncryptionFinished] (#onEncryption-Finished)
+ * [onErrorReceived](#onError-Received)
+ 
+ * onEncryptionFinished : 
+   This method will be called when token is successfully generated.
+    > response.getDataDescriptor() returns  "COMMON.ACCEPT.INAPP.PAYMENT" 
+    > response.getDataValue()  returns Token data Ex: 9469429169768019305001
+    This information are used to perform Payment transaction.
 
 ```java
 @Override
@@ -98,10 +106,12 @@ public void onEncryptionFinished(EncryptTransactionResponse response)
                  .show();
 }
 ```
-"onEncryptionFinished" method will be called when token is successfully generated.
-    response.getDataDescriptor() returns  "COMMON.ACCEPT.INAPP.PAYMENT" 
-    response.getDataValue()  returns Token data Ex: 9469429169768019305001
-This information are used to perform Payment transaction.
+* onErrorReceived :
+   This  method will be called in three senarios,
+     > Validation of information is failed.
+     > Network related errors.
+     > API error response.
+ "ErrorTransactionResponse" may contain one or more error messages.
 
 ```java
 @Override
@@ -114,13 +124,6 @@ public void onErrorReceived(ErrorTransactionResponse errorResponse)
                  .show();
 }
 ```
-"onErrorReceived" method will be called in three senarios,
- 1. Validation of information is failed.
- 2. Network related errors.
- 3. API error response.
- "ErrorTransactionResponse" may contain one or more error messages.
-
-🎉**Congratulations, you're using Accept SDK on Android!** 👏
 
 ## Demo Applcation
  We have a demo application which demonstrates the SDK usage:  
