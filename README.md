@@ -88,8 +88,8 @@ apiClient.getTokenWithRequest(transactionObject, callback);
 
 To get a response back, the activity/fragment should implement the `EncryptTransactionCallback` interface. It has following methods.
 
-1. [onEncryptionFinished](#onEncryption-Finished)
-1. [onErrorReceived](#onError-Received)
+> [onEncryptionFinished()](#onEncryption-Finished)
+> [onErrorReceived()](#onError-Received)
 
 ### onEncryptionFinished() 
 
@@ -108,7 +108,6 @@ public void onEncryptionFinished(EncryptTransactionResponse response)
 ### onErrorReceived()
 
    This  method will be called in three senarios,
-   
      > Validation of information is failed.
      > Network related errors.
      > API error response.
