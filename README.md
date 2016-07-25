@@ -129,6 +129,7 @@ public void onErrorReceived(ErrorTransactionResponse errorResponse)
 ```
 
 ## Demo Applcation
+
  We have a demo application which demonstrates the SDK usage:  
    https://github.com/AuthorizeNet/accept-sample-android
 
