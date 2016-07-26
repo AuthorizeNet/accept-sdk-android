@@ -1,7 +1,7 @@
 
 # Accept Android SDK
 
-This SDK is Android version of [Accept JS](http://developer.authorize.net/api/reference/features/acceptjs.html). This SDK is used to fetch token for given Payment Information.
+This SDK is Android version of [Accept JS](http://developer.authorize.net/api/reference/features/acceptjs.html). This SDK is used to fetch token for a given Payment Information.
 
 ## Contents
 
@@ -31,7 +31,7 @@ dependencies {
 
 ### 1. Initialize AcceptSDKApiClient
 
- All SDK APi's will be accessed through `AcceptSDKApiClient` Object. It can be created as follows:
+ All SDK API's will be accessed through `AcceptSDKApiClient` Object, which can be created as follows:
 
 ```java
 // Parameters:
