@@ -3,7 +3,7 @@ apply plugin: 'com.android.library'
 ext {
   PUBLISH_GROUP_ID = 'net.authorize'
   PUBLISH_ARTIFACT_ID = 'accept-android-sdk'
-  PUBLISH_VERSION = '0.5'
+  PUBLISH_VERSION = '0.6'
 }
 android {
   compileSdkVersion 23

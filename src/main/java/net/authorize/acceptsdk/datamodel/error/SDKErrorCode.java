@@ -7,7 +7,7 @@ package net.authorize.acceptsdk.datamodel.error;
  * kbollepa@visa.com
  */
 public enum SDKErrorCode {
-  //TODO: Need to add documentation.
+
   E_WC_02("E_WC_02", "A HTTPS connection is required."),
   E_WC_04("E_WC_04", "Please provide mandatory field to library."),
   E_WC_05("E_WC_05", "Please provide valid credit card number."),

@@ -134,7 +134,7 @@ public class AcceptService extends IntentService {
             ErrorTransactionResponse.createErrorResponse(SDKErrorCode.E_WC_02.getErrorCode(),
                 urlConnection.getErrorStream());
       } else {
-        //FIXME: Need to revisit this code. To map to  appropriate error.
+        //COMMENT: Handles other HTTP errors.
         resultObject = ErrorTransactionResponse.createErrorResponse(SDKErrorCode.E_WC_02);
       }
     } catch (SocketTimeoutException e) {

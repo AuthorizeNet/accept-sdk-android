@@ -65,8 +65,6 @@ public class FingerPrintBasedMerchantAuthentication extends AbstractMerchantAuth
     }
 
     if (!mFingerPrintData.validateFingerPrint(callback)) {
-      callback.OnValidationFailed(
-          ErrorTransactionResponse.createErrorResponse(SDKErrorCode.E_WC_13));
       return false;
     }
     return true;

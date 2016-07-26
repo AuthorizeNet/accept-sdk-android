@@ -1,35 +1,50 @@
 
-# Authorize.Net Accept Mobile SDK for Android
+# Accept Android SDK
 
-## SDK Installation
+This SDK is Android version of [Accept JS](http://developer.authorize.net/api/reference/features/acceptjs.html). This SDK is used to fetch token for given Payment Information.
 
-Android Studio is preferred because Eclipse will not be supported by Google much longer.
+## Contents
 
-### Android Studio (or Gradle)
+1. [Installation](#installation-one-step)
+1. [Getting Started](#getting-started-four-steps)
+1. [Demo Applcation](#demo-applcation)
 
-Add this line to your app's `build.gradle` inside the `dependencies` section as follows:
+## Installation (One Step)
+Add the dependency from jCenter to your app's (not project) `build.gradle` file.
 
 ```groovy
-    dependencies {
-        compile 'net.authorize:accept-android-sdk:+'
-    }
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'net.authorize:accept-android-sdk:+'
+}
 ```
 
-## SDK Usage
-After the installation is succesfully complete, perform the following steps to program an Android app with this SDK.
+## Getting Started (Four Steps)
 
-1) To initiate requests with the SDK, create an API client that will make API requests on your behalf. The Accept SDK API client can be built as follows:
+### Prerequisites
+
+ Android API 14+ is required as the `minSdkVersion` in your build.gradle
+
+
+### 1. Initialize AcceptSDKApiClient
+
+ All SDK APi's will be accessed through `AcceptSDKApiClient` Object. It can be created as follows:
 
 ```java
 // Parameters:
-// 1) Context - current context
+// 1) Context - Activity context
 // 2) AcceptSDKApiClient.Environment - AUTHORIZE.NET ENVIRONMENT
 apiClient = new AcceptSDKApiClient.Builder (getActivity(),
                                           AcceptSDKApiClient.Environment.SANDBOX) 
                                           .sdkConnectionTimeout(5000) // optional connection time out in milliseconds
                                           .build();
 ```
-2) To make the API call, you can create a Encryption transaction object as follows:
+
+### 2. Prepare Objects rquired to call Token API
+ Fetch token API require `EncryptTransactionObject` and it can be created as follows:
 
 ```java
  EncryptTransactionObject transactionObject = TransactionObject.
@@ -38,7 +53,8 @@ apiClient = new AcceptSDKApiClient.Builder (getActivity(),
         .merchantAuthentication(prepareMerchantAuthentication()) //Merchant authentication
         .build();
 ```
-A card object can be created as follows:
+
+`EncryptTransactionObject` require CardData object and it can be created as follows:
 
 ```java
 CardData cardData = new CardData.Builder(CARD_NUMBER,
@@ -50,15 +66,19 @@ CardData cardData = new CardData.Builder(CARD_NUMBER,
                                                .build();
 ```
 
-Merchant Authentication can be created as follows:
+`EncryptTransactionObject` require Merchant Authentication object and it can be created as follows:
 
 ```java
 ClientKeyBasedMerchantAuthentication merchantAuthentication = ClientKeyBasedMerchantAuthentication.
                 createMerchantAuthentication(API_LOGIN_ID, CLIENT_KEY);
 ```
-Check out  "Obtaining a Public Client Key" in http://developer.authorize.net/api/reference/features/acceptjs.html to get CLIENT_KEY.
 
-3) When the API client and transaction information are ready, you can make a call to perform a specific API.
+Check out "Obtaining a Public Client Key" section in [Accept JS](http://developer.authorize.net/api/reference/features/acceptjs.html) 
+to get more information getting CLIENT_KEY.
+
+### 3. Calling Token API
+
+When transaction information are ready, you can make following call to fetch token.
 
 ```java
 // Parameters: 
@@ -67,8 +87,18 @@ Check out  "Obtaining a Public Client Key" in http://developer.authorize.net/api
 apiClient.getTokenWithRequest(transactionObject, callback);
 ```
 
-4) To get a response back, the activity/fragment should implement the `EncryptTransactionCallback` interface.
+### 4. Implement  EncryptTransactionCallback Interface.
 
+To get a response back, the activity/fragment should implement the `EncryptTransactionCallback` interface. It has following methods.
+
+> [onEncryptionFinished()](#onEncryption-Finished)
+
+> [onErrorReceived()](#onError-Received)
+
+### onEncryptionFinished() 
+
+   This method will be called when token is successfully generated.`EncryptTransactionResponse` object has Data Descriptor and Data value details which will be used to perform payment transaction.
+   
 ```java
 @Override
 public void onEncryptionFinished(EncryptTransactionResponse response) 
@@ -79,9 +109,16 @@ public void onEncryptionFinished(EncryptTransactionResponse response)
                  .show();
 }
 ```
-**OR**
 
-In case of an error:
+### onErrorReceived()
+
+   This  method will be called in three senarios,
+   
+     > Validation of information is failed.
+     > Network related errors.
+     > API error response.
+     
+ `ErrorTransactionResponse` may contain one or more error messages.
 
 ```java
 @Override
@@ -95,7 +132,8 @@ public void onErrorReceived(ErrorTransactionResponse errorResponse)
 }
 ```
 
-##Sample Application
-We have a sample application which demonstrates the SDK usage:  
+## Demo Applcation
+
+ We have a demo application which demonstrates the SDK usage:  
    https://github.com/AuthorizeNet/accept-sample-android
 
