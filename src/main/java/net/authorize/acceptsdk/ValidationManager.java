@@ -173,11 +173,8 @@ public class ValidationManager {
    */
   public static boolean isValidAmount(double amount) {
 
-    final String regExp = "[0-9]+([,.][0-9]{1,2})?";
-    String amountString = String.valueOf(amount);
-    if (!amountString.matches(regExp)) {
-      return false;
-    }
+    if (amount < 0) return false;
+
     return true;
   }
 
@@ -189,7 +186,7 @@ public class ValidationManager {
    * @return true if validation is success, false if fails.
    */
   public static boolean isValidTimeStamp(long timestamp) {
-    if (timestamp < 0) {
+    if (timestamp <= 0) {
       return false;
     }
     return true;

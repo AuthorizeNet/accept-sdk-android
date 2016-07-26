@@ -195,8 +195,8 @@ public class AcceptSDKParser {
       throws JSONException {
     stringer.key(Authentication.FINGER_PRINT).object(); //Fingerprint section
     stringer.key(FingerPrint.HASH_VALUE).value(fData.getHashValue());
-    stringer.key(FingerPrint.TIME_STAMP).value(fData.getTimestampString());
     if (fData.getSequence() != null) stringer.key(FingerPrint.SEQUENCE).value(fData.getSequence());
+    stringer.key(FingerPrint.TIME_STAMP).value(fData.getTimestampString());
     if (fData.getCurrencyCode() != null) {
       stringer.key(FingerPrint.CURRENCY_CODE).value(fData.getCurrencyCode());
     }
