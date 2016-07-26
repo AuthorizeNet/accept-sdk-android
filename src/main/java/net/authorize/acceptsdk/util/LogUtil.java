@@ -1,6 +1,7 @@
 package net.authorize.acceptsdk.util;
 
 import android.util.Log;
+import net.authorize.acceptsdk.BuildConfig;
 
 /**
  * Utility class for Logging.
