@@ -82,7 +82,8 @@ public class CardData implements Serializable {
       return result;
     }
 
-    if (!ValidationManager.isValidExpirationDate(expirationYear, expirationYear)) {
+    if (!ValidationManager.isValidExpirationDate(expirationMonth, expirationYear)) {
+		
       callback.OnValidationFailed(
           ErrorTransactionResponse.createErrorResponse(SDKErrorCode.E_WC_08));
       return result;

@@ -161,6 +161,7 @@ public class ValidationManager {
     }
     return true;
   }
+<<<<<<< HEAD
 
   /* ----------------- Validations related to Finger Print -------------------------*/
 
@@ -176,6 +177,33 @@ public class ValidationManager {
     final String regExp = "[0-9]+([,.][0-9]{1,2})?";
     String amountString = String.valueOf(amount);
     if (!amountString.matches(regExp)) {
+=======
+
+  /* ----------------- Validations related to Finger Print -------------------------*/
+
+  /**
+   * Method validates amount.
+   * Amount should be positive numbers with 1-2 digit fraction.
+   *
+   * @param amount as double
+   * @return true if validation is success, false if fails.
+   */
+  public static boolean isValidAmount(double amount) {
+
+    if (amount < 0) return false;
+
+    return true;
+  }
+
+  /**
+   * Method validates Time stamp.
+   * Amount should be positive numbers.
+   *
+   * @param timestamp as long
+   * @return true if validation is success, false if fails.
+   */
+  public static boolean isValidTimeStamp(long timestamp) {
+    if (timestamp <= 0) {
       return false;
     }
     return true;
