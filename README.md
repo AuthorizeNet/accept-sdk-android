@@ -1,7 +1,10 @@
 
-# Accept Android SDK
+# Authorize.Net Accept Mobile SDK for Android  
 
-This SDK is Android version of [Accept JS](http://developer.authorize.net/api/reference/features/acceptjs.html). This SDK is used to fetch token for a given Payment Information.
+   ****THIS IS A PRE-RELEASE SDK - NOT CURRENTLY AVAILABLE FOR PRODUCTION USAGE****
+  
+This SDK allows mobile developers to provide credit card payment functionality within their Android applications without having to pass sensitive card data back to their application backend servers.
+
 
 ## Contents
 
@@ -132,8 +135,11 @@ public void onErrorReceived(ErrorTransactionResponse errorResponse)
 }
 ```
 
-## Demo Applcation
+## Sample Applcation
 
- We have a demo application which demonstrates the SDK usage:  
+ We have a sample application which demonstrates the SDK usage:  
    https://github.com/AuthorizeNet/accept-sample-android
-
+  
+  
+##Google Play In-App Billing API
+Google’s developer terms require that purchases related to the app, such as premium features or credits, are made via their native Google Play In-app Billing API.  See https://play.google.com/about/developer-content-policy.html for more details.
