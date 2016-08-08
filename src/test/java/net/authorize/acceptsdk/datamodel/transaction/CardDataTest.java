@@ -37,9 +37,9 @@ public class CardDataTest {
     cardNumber = "4111111111111111";
     month = "11";
     year = "2020";
-    CardData card = new CardData.Builder(cardNumber, month, year).setCVVCode("111")
-        .setZipCode("abc")
-        .setCardHolderName("kiran")
+    CardData card = new CardData.Builder(cardNumber, month, year).cvvCode("111")
+        .zipCode("abc")
+        .cardHolderName("kiran")
         .build();
     Assert.assertEquals(true, card.validateCardData(callBack));
   }
@@ -121,7 +121,7 @@ public class CardDataTest {
     month = "11";
     year = "2020";
     cvvCode = "111a";
-    CardData card = new CardData.Builder(cardNumber, month, year).setCVVCode(cvvCode).build();
+    CardData card = new CardData.Builder(cardNumber, month, year).cvvCode(cvvCode).build();
     Assert.assertEquals(false, card.validateCardData(callBack));
   }
 
@@ -131,8 +131,8 @@ public class CardDataTest {
     year = "2020";
     cvvCode = "111";
     zipCode = "b";
-    CardData card = new CardData.Builder(cardNumber, month, year).setCVVCode(cvvCode)
-        .setZipCode(zipCode)
+    CardData card = new CardData.Builder(cardNumber, month, year).cvvCode(cvvCode)
+        .zipCode(zipCode)
         .build();
     Assert.assertEquals(true, card.validateCardData(callBack));
   }
@@ -143,8 +143,8 @@ public class CardDataTest {
     year = "2020";
     cvvCode = "111";
     zipCode = "   ";
-    CardData card = new CardData.Builder(cardNumber, month, year).setCVVCode(cvvCode)
-        .setZipCode(zipCode)
+    CardData card = new CardData.Builder(cardNumber, month, year).cvvCode(cvvCode)
+        .zipCode(zipCode)
         .build();
     Assert.assertEquals(false, card.validateCardData(callBack));
   }
@@ -156,9 +156,9 @@ public class CardDataTest {
     cvvCode = "111";
     zipCode = "bangalore";
     cardHolderName = "kiran bollepalli";
-    CardData card = new CardData.Builder(cardNumber, month, year).setCVVCode(cvvCode)
-        .setZipCode(zipCode)
-        .setCardHolderName(cardHolderName)
+    CardData card = new CardData.Builder(cardNumber, month, year).cvvCode(cvvCode)
+        .zipCode(zipCode)
+        .cardHolderName(cardHolderName)
         .build();
     Assert.assertEquals(true, card.validateCardData(callBack));
   }
@@ -172,9 +172,9 @@ public class CardDataTest {
     cardHolderName =
         "kiran bollepalli afafakfhaskjfadjsfjasdfhasdfadsjfdasjfhasdfhasdhfjhadsfhadfhfjadfn"
             + " sdfadffasdfadsfasdfasdfa adsfasdfadsfdasfa";
-    CardData card = new CardData.Builder(cardNumber, month, year).setCVVCode(cvvCode)
-        .setZipCode(zipCode)
-        .setCardHolderName(cardHolderName)
+    CardData card = new CardData.Builder(cardNumber, month, year).cvvCode(cvvCode)
+        .zipCode(zipCode)
+        .cardHolderName(cardHolderName)
         .build();
     Assert.assertEquals(false, card.validateCardData(callBack));
   }

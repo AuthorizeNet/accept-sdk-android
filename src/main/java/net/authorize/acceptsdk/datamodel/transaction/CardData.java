@@ -179,17 +179,17 @@ public class CardData implements Serializable {
       this.expirationYear = expirationYear;
     }
 
-    public CardData.Builder setCVVCode(String cvvCode) {
+    public CardData.Builder cvvCode(String cvvCode) {
       this.cvvCode = cvvCode;
       return this;
     }
 
-    public CardData.Builder setZipCode(String zipCode) {
+    public CardData.Builder zipCode(String zipCode) {
       this.zipCode = zipCode;
       return this;
     }
 
-    public CardData.Builder setCardHolderName(String cardHolderName) {
+    public CardData.Builder cardHolderName(String cardHolderName) {
       this.cardHolderName = cardHolderName;
       return this;
     }

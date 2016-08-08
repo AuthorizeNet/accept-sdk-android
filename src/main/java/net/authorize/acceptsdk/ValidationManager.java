@@ -172,7 +172,7 @@ public class ValidationManager {
    * @return true if validation is success, false if fails.
    */
   public static boolean isValidAmount(double amount) {
-    if (amount < 0) return false;
+    if (amount <= 0) return false;
     return true;
   }
 
