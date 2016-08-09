@@ -99,7 +99,7 @@ public class AcceptSDKApiClient {
      * @param timeout, time in milli seconds
      * @return AcceptSDKApiClient.Builder
      */
-    public AcceptSDKApiClient.Builder setConnectionTimeout(int timeout) {
+    public AcceptSDKApiClient.Builder connectionTimeout(int timeout) {
       this.connectionTimeout = timeout;
       return this;
     }

@@ -23,6 +23,8 @@ import org.json.JSONStringer;
 import org.json.JSONTokener;
 
 import static net.authorize.acceptsdk.parser.JSONConstants.Authentication;
+import static net.authorize.acceptsdk.parser.JSONConstants.CLIENT_ID;
+import static net.authorize.acceptsdk.parser.JSONConstants.CLIENT_ID_VALUE;
 import static net.authorize.acceptsdk.parser.JSONConstants.CONTAINER_REQUEST;
 import static net.authorize.acceptsdk.parser.JSONConstants.Card;
 import static net.authorize.acceptsdk.parser.JSONConstants.DATA;
@@ -50,78 +52,6 @@ import static net.authorize.acceptsdk.parser.JSONConstants.TYPE_VALUE_TOKEN;
 public class AcceptSDKParser {
 
   /**
-   * Method create Json Object for Encryption API call.
-   *
-   * @param transactionObject encryption transaction Object. Also see {@link
-   * EncryptTransactionObject}
-   * @return String json String
-   * @throws JSONException, exception will be thrown when creation of Json fails.
-   */
-  public static String getJsonFromEncryptTransaction(EncryptTransactionObject transactionObject)
-      throws JSONException {
-
-    // Json related to token section
-    CardData cardData = transactionObject.getCardData();
-    JSONObject tokenData = new JSONObject();
-    tokenData.put(Card.CARD_NUMBER, cardData.getCardNumber());
-    tokenData.put(Card.EXPIRATION_DATE, cardData.getExpirationInFormatMMYYYY());
-    //COMMENT: Optional fields
-    if (cardData.getCvvCode() != null) tokenData.put(Card.CARD_CODE, cardData.getCvvCode());
-    if (cardData.getZipCode() != null) tokenData.put(Card.ZIP, cardData.getZipCode());
-    if (cardData.getCardHolderName() != null) {
-      tokenData.put(Card.CARD_HOLDER_NAME, cardData.getCardHolderName());
-    }
-    // Json Related to data section.
-    JSONObject data = new JSONObject();
-    data.put(TYPE, TYPE_VALUE_TOKEN);
-    data.put(ID, transactionObject.getGuid());
-    data.put(TOKEN, tokenData);
-
-    // Json related to merchant authentication section.
-    JSONObject authentication = new JSONObject();
-    authentication.put(Authentication.NAME,
-        transactionObject.getMerchantAuthentication().getApiLoginID());
-
-    MerchantAuthenticationType authenticationType =
-        transactionObject.getMerchantAuthentication().getMerchantAuthenticationType();
-    if (authenticationType == MerchantAuthenticationType.CLIENT_KEY) {
-      ClientKeyBasedMerchantAuthentication clientKeyAuth =
-          (ClientKeyBasedMerchantAuthentication) transactionObject.getMerchantAuthentication();
-      authentication.put(Authentication.CLIENT_KEY, clientKeyAuth.getClientKey());
-    } else if (authenticationType == MerchantAuthenticationType.FINGERPRINT) {
-      FingerPrintBasedMerchantAuthentication fingerPrintAuth =
-          (FingerPrintBasedMerchantAuthentication) transactionObject.getMerchantAuthentication();
-      // Json related to finger print data
-      JSONObject fDataJson = new JSONObject();
-      FingerPrintData fData = fingerPrintAuth.getFingerPrintData();
-      fDataJson.put(FingerPrint.HASH_VALUE, fData.getHashValue());
-      fDataJson.put(FingerPrint.TIME_STAMP, fData.getTimestampString());
-
-      //Optional fields
-      if (fData.getSequence() != null) {
-        fDataJson.put(FingerPrint.SEQUENCE, fData.getSequence());
-      }
-      if (fData.getCurrencyCode() != null) {
-        fDataJson.put(FingerPrint.CURRENCY_CODE, fData.getCurrencyCode());
-      }
-      if (fData.getAmountString() != null) {
-        fDataJson.put(FingerPrint.AMOUNT, fData.getAmountString());
-      }
-      authentication.put(Authentication.FINGER_PRINT, fDataJson);
-    }
-
-    JSONObject paymentContainer = new JSONObject();
-    paymentContainer.put(MERCHANT_AUTHENTICATION, authentication);
-    paymentContainer.put(DATA, data);
-
-    JSONObject request = new JSONObject();
-    request.put(CONTAINER_REQUEST, paymentContainer);
-
-    LogUtil.log(LOG_LEVEL.INFO, "getJsonFromEncryptTransaction : " + request.toString());
-    return request.toString();
-  }
-
-  /**
    * Method create Json Object for Encryption API call. Using this method order of insertion is
    * preserved.
    *
@@ -139,6 +69,7 @@ public class AcceptSDKParser {
     JSONStringer stringer = new JSONStringer().object();
     stringer.key(CONTAINER_REQUEST).object();
     prepareJsonForAuthenticationSection(stringer, transactionObject);
+    stringer.key(CLIENT_ID).value(CLIENT_ID_VALUE);
     stringer.key(DATA).object(); //Data section
     stringer.key(TYPE).value(TYPE_VALUE_TOKEN);
     stringer.key(ID).value(transactionObject.getGuid());

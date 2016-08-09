@@ -42,7 +42,7 @@ dependencies {
 // 2) AcceptSDKApiClient.Environment - AUTHORIZE.NET ENVIRONMENT
 apiClient = new AcceptSDKApiClient.Builder (getActivity(),
                                           AcceptSDKApiClient.Environment.SANDBOX) 
-                                          .sdkConnectionTimeout(5000) // optional connection time out in milliseconds
+                                          .connectionTimeout(5000) // optional connection time out in milliseconds
                                           .build();
 ```
 
@@ -63,9 +63,9 @@ apiClient = new AcceptSDKApiClient.Builder (getActivity(),
 CardData cardData = new CardData.Builder(CARD_NUMBER,
                                                EXPIRATION_MONTH, // MM
                                                EXPIRATION_YEAR) // YYYY
-                                               .setCVVCode(CARD_CVV) // Optional
-                                               .setZipCode(ZIP_CODE)// Optional
-                                               .setCardHolderName(CARD_HOLDER_NAME)// Optional
+                                               .cvvCode(CARD_CVV) // Optional
+                                               .zipCode(ZIP_CODE)// Optional
+                                               .cardHolderName(CARD_HOLDER_NAME)// Optional
                                                .build();
 ```
 

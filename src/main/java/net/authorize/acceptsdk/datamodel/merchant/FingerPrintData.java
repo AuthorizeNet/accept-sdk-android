@@ -15,6 +15,8 @@ import net.authorize.acceptsdk.datamodel.transaction.response.ErrorTransactionRe
  */
 public class FingerPrintData implements Serializable {
 
+  private final double DEFAULT_AMOUNT = -99999.99;
+
   //Mandatory
   private String hashValue;
   private long timestamp;
@@ -22,7 +24,7 @@ public class FingerPrintData implements Serializable {
   //Optional
   private String sequence;
   private String currencyCode;
-  private double amount;
+  private double amount = DEFAULT_AMOUNT;
 
   public FingerPrintData(Builder builder) {
 
@@ -76,7 +78,7 @@ public class FingerPrintData implements Serializable {
       return false;
     }
 
-    if (amount != 0.0 && !ValidationManager.isValidAmount(amount)) {
+    if (amount != DEFAULT_AMOUNT && !ValidationManager.isValidAmount(amount)) {
       callback.OnValidationFailed(
           ErrorTransactionResponse.createErrorResponse(SDKErrorCode.E_WC_13));
       return false;

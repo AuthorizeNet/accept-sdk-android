@@ -1,5 +1,7 @@
 package net.authorize.acceptsdk.parser;
 
+import net.authorize.acceptsdk.BuildConfig;
+
 /**
  * Describes all Json strings, which are used in API's.
  *
@@ -54,6 +56,10 @@ public final class JSONConstants {
   public static final String DATA = "data";
   public static final String TYPE = "type";
   public static final String TYPE_VALUE_TOKEN = "TOKEN";
+  public static final String CLIENT_ID = "clientId";
+  public static final String CLIENT_ID_VALUE = "accept-sdk-android" + BuildConfig.VERSION_NAME;
+
+
   public static final String ID = "id";
   public static final String TOKEN = "token";
 
