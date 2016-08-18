@@ -1,7 +1,6 @@
 
 # Authorize.Net Accept Mobile SDK for Android  
 
-   ****THIS IS A PRE-RELEASE SDK - NOT CURRENTLY AVAILABLE FOR PRODUCTION USAGE****
   
 This SDK allows mobile developers to provide credit card payment functionality within their Android applications without having to pass sensitive card data back to their application backend servers.
 
