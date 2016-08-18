@@ -2,7 +2,7 @@
 # Authorize.Net Accept Mobile SDK for Android  
 
   
-This SDK allows mobile developers to provide credit card payment functionality within their Android applications without having to pass sensitive card data back to their application backend servers.
+This SDK allows mobile developers to provide credit card payment functionality within their Android applications without having to pass sensitive card data back to their application backend servers.  For more information on including payments in your mobile application see our [InApp Payments Guide](http://developer.authorize.net/api/reference/features/in-app.html)
 
 
 ## Contents
@@ -75,7 +75,7 @@ ClientKeyBasedMerchantAuthentication merchantAuthentication = ClientKeyBasedMerc
                 createMerchantAuthentication(API_LOGIN_ID, CLIENT_KEY);
 ```
 
-Check out "Obtaining a Public Client Key" section in [Accept JS](http://developer.authorize.net/api/reference/features/acceptjs.html) 
+Check out "Obtaining a Public Client Key" section in [Accept Mobile](http://developer.authorize.net/api/reference/features/in-app.html) 
 to get more information getting CLIENT_KEY.
 
 ### 3. Calling Token API
