@@ -45,7 +45,7 @@ apiClient = new AcceptSDKApiClient.Builder (getActivity(),
                                           .build();
 ```
 
-### 2. Prepare Objects rquired to call Token API
+### 2. Prepare Objects required to call Token API
  Fetch token API require `EncryptTransactionObject` and it can be created as follows:
 
 ```java
