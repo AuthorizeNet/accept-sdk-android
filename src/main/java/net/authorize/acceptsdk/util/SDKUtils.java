@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -14,6 +16,8 @@ import java.util.GregorianCalendar;
 import java.util.Scanner;
 import java.util.TimeZone;
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
 
 /**
  * This class provides static common methods to be used by other classes in the
@@ -140,7 +144,11 @@ public class SDKUtils {
       boolean doOutput) throws IOException {
     URL url = new URL(urlString);
     HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
-    //urlConnection.setSSLSocketFactory(getSSLSocketFactory());
+    SSLSocketFactory socketFactory = getSSLSocketFactory();
+    if (socketFactory != null) {
+      urlConnection.setSSLSocketFactory(getSSLSocketFactory());
+    }
+
     if (requestMethod != null) {
       urlConnection.setRequestMethod(requestMethod);
     }
@@ -149,6 +157,18 @@ public class SDKUtils {
     urlConnection.setDoOutput(doOutput);
     urlConnection.setDoInput(true);
     return urlConnection;
+  }
+
+
+  public static SSLSocketFactory getSSLSocketFactory() {
+    SSLContext context;
+    try {
+      context = SSLContext.getInstance("TLSv1.2");
+      context.init(null, null, new java.security.SecureRandom());
+      return context.getSocketFactory();
+    } catch (NoSuchAlgorithmException | KeyManagementException e) {
+      return null;
+    }
   }
 
   public static SDKCurrency getSDKCurrencyFromString(String currencyString) {
