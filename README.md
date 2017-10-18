@@ -2,17 +2,17 @@
 # Authorize.Net Accept Mobile SDK for Android  
 
   
-This SDK allows mobile developers to accept payments on a customer's mobile device from within their Android applications without having to pass sensitive card data back to their application backend servers.  For more information on including payments in your mobile application see our [InApp Payments Guide](http://developer.authorize.net/api/reference/features/in-app.html)
+This SDK allows mobile developers to accept payments on a customer's mobile device from within their Android applications without having to pass sensitive card data back to their application backend servers.  For more information on including payments in your mobile application see our [In-App Payments Guide](http://developer.authorize.net/api/reference/features/in-app.html)
 
 
 ## Contents
 
 1. [Installation](#installation-one-step)
 1. [Getting Started](#getting-started-four-steps)
-1. [Demo Applcation](#demo-applcation)
+1. [Sample Application](#sample-application)
 
 ## Installation (One Step)
-Add the dependency from jCenter to your app's (not project) `build.gradle` file.
+Add the dependency from jCenter to your app's (not project's) `build.gradle` file.
 
 ```groovy
 repositories {
@@ -27,13 +27,11 @@ dependencies {
 ## Getting Started (Four Steps)
 
 ### Prerequisites
-
- Android API 14+ is required as the `minSdkVersion` in your build.gradle
+Android API 14+ is required as the `minSdkVersion` in your build.gradle
 
 
 ### 1. Initialize AcceptSDKApiClient
-
- All SDK API's will be accessed through `AcceptSDKApiClient` Object, which can be created as follows:
+All SDK API's will be accessed through `AcceptSDKApiClient` Object, which can be created as follows:
 
 ```java
 // Parameters:
@@ -46,7 +44,7 @@ apiClient = new AcceptSDKApiClient.Builder (getActivity(),
 ```
 
 ### 2. Prepare Objects required to call Token API
- Fetch token API require `EncryptTransactionObject` and it can be created as follows:
+Fetch token API requires `EncryptTransactionObject`, which can be created as follows:
 
 ```java
  EncryptTransactionObject transactionObject = TransactionObject.
@@ -56,7 +54,7 @@ apiClient = new AcceptSDKApiClient.Builder (getActivity(),
         .build();
 ```
 
-`EncryptTransactionObject` require CardData object and it can be created as follows:
+`EncryptTransactionObject` requires `cardData` object, which  can be created as follows:
 
 ```java
 CardData cardData = new CardData.Builder(CARD_NUMBER,
@@ -68,19 +66,18 @@ CardData cardData = new CardData.Builder(CARD_NUMBER,
                                                .build();
 ```
 
-`EncryptTransactionObject` require Merchant Authentication object and it can be created as follows:
+`EncryptTransactionObject` requires `merchantAuthentication` object, which  can be created as follows:
 
 ```java
 ClientKeyBasedMerchantAuthentication merchantAuthentication = ClientKeyBasedMerchantAuthentication.
                 createMerchantAuthentication(API_LOGIN_ID, CLIENT_KEY);
 ```
 
-Check out "Obtaining a Public Client Key" section in [Accept Mobile](http://developer.authorize.net/api/reference/features/in-app.html) 
-to get more information getting CLIENT_KEY.
+Check out the "Obtaining a Public Client Key" section in [Accept Mobile](http://developer.authorize.net/api/reference/features/in-app.html) 
+for more information on getting CLIENT_KEY.
 
 ### 3. Calling Token API
-
-When transaction information are ready, you can make following call to fetch token.
+When transaction information is ready, you can make the following call to fetch token:
 
 ```java
 // Parameters: 
@@ -89,17 +86,15 @@ When transaction information are ready, you can make following call to fetch tok
 apiClient.getTokenWithRequest(transactionObject, callback);
 ```
 
-### 4. Implement  EncryptTransactionCallback Interface.
+### 4. Implement  `EncryptTransactionCallback` Interface.
+To get a response back, the activity/fragment should implement the `EncryptTransactionCallback` interface. It has thefollowing methods:
 
-To get a response back, the activity/fragment should implement the `EncryptTransactionCallback` interface. It has following methods.
+> [`onEncryptionFinished()`](#onEncryption-Finished)
 
-> [onEncryptionFinished()](#onEncryption-Finished)
+> [`onErrorReceived()`](#onError-Received)
 
-> [onErrorReceived()](#onError-Received)
-
-### onEncryptionFinished() 
-
-   This method will be called when token is successfully generated.`EncryptTransactionResponse` object has Data Descriptor and Data value details which will be used to perform payment transaction.
+#### `onEncryptionFinished()` 
+   This method will be called when token is successfully generated.`EncryptTransactionResponse` object has Data Descriptor and Data Value details which will be used to perform the payment transaction.
    
 ```java
 @Override
@@ -112,9 +107,8 @@ public void onEncryptionFinished(EncryptTransactionResponse response)
 }
 ```
 
-### onErrorReceived()
-
-   This  method will be called in three senarios,
+#### `onErrorReceived()`
+   This method will be called in three scenarios,
    
      > Validation of information is failed.
      > Network related errors.
@@ -134,11 +128,10 @@ public void onErrorReceived(ErrorTransactionResponse errorResponse)
 }
 ```
 
-## Sample Applcation
-
- We have a sample application which demonstrates the SDK usage:  
+## Sample Application
+We have a sample application which demonstrates the SDK usage:  
    https://github.com/AuthorizeNet/accept-sample-android
   
   
-##Google Play In-App Billing API
+## Google Play In-App Billing API
 Google’s developer terms require that purchases related to the app, such as premium features or credits, are made via their native Google Play In-app Billing API.  See https://play.google.com/about/developer-content-policy.html for more details.
