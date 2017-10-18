@@ -9,7 +9,7 @@ This SDK allows mobile developers to accept payments on a customer's mobile devi
 
 1. [Installation](#installation-one-step)
 1. [Getting Started](#getting-started-four-steps)
-1. [Demo Applcation](#demo-applcation)
+1. [Demo Application](#sample-application)
 
 ## Installation (One Step)
 Add the dependency from jCenter to your app's (not project) `build.gradle` file.
@@ -134,7 +134,7 @@ public void onErrorReceived(ErrorTransactionResponse errorResponse)
 }
 ```
 
-## Sample Applcation
+## Sample Application
 
  We have a sample application which demonstrates the SDK usage:  
    https://github.com/AuthorizeNet/accept-sample-android
