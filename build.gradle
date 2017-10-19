@@ -1,11 +1,23 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.2.0'
+    }
+}
+
 apply plugin: 'com.android.library'
 
 ext {
   PUBLISH_GROUP_ID = 'net.authorize'
   PUBLISH_ARTIFACT_ID = 'accept-android-sdk'
-  PUBLISH_VERSION = '1.0.0'
+  PUBLISH_VERSION = '1.0.1'
   // COMMENT : If publish version changes change "version name" in "defaultconfig" below
 }
+
+
+
 android {
   compileSdkVersion 23
   buildToolsVersion "23.0.3"
@@ -14,7 +26,7 @@ android {
     minSdkVersion 14
     targetSdkVersion 23
     versionCode 1
-    versionName "1.0.0"
+    versionName "1.0.1"
   }
 //  compileOptions {
 //    sourceCompatibility JavaVersion.VERSION_1_7
@@ -31,6 +43,11 @@ android {
       returnDefaultValues = true
     }
   }
+}
+
+repositories {
+    mavenCentral()
+
 }
 
 dependencies {
