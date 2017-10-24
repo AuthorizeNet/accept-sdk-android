@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    compile 'net.authorize:accept-android-sdk:+'
+    compile 'net.authorize:accept-sdk-android:1.0.2'
 }
 ```
 
