@@ -57,7 +57,7 @@ public final class JSONConstants {
   public static final String TYPE = "type";
   public static final String TYPE_VALUE_TOKEN = "TOKEN";
   public static final String CLIENT_ID = "clientId";
-  public static final String CLIENT_ID_VALUE = "accept-sdk-android" + BuildConfig.VERSION_NAME;
+  public static final String CLIENT_ID_VALUE = "accept-sdk-android" + BuildConfig.SDK_VERSION;
 
 
   public static final String ID = "id";

@@ -20,7 +20,7 @@ public class EncryptTransactionObjectTest {
   ClientKeyBasedMerchantAuthentication clientKeyBasedMerchantAuthentication;
   private final String CARD_NUMBER = "4111111111111111";
   private final String EXPIRATION_MONTH = "11";
-  private final String EXPIRATION_YEAR = "2017";
+  private final String EXPIRATION_YEAR = "2050";
   private final String CVV = "256";
   CardData cardData;
   ValidationCallback callBack;
