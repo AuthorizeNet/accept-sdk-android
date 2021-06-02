@@ -3,18 +3,22 @@ package net.authorize.acceptsdk.network;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
-import android.test.ServiceTestCase;
-import android.test.mock.MockContext;
 import net.authorize.acceptsdk.datamodel.merchant.ClientKeyBasedMerchantAuthentication;
 import net.authorize.acceptsdk.datamodel.transaction.CardData;
 import net.authorize.acceptsdk.datamodel.transaction.EncryptTransactionObject;
 import net.authorize.acceptsdk.datamodel.transaction.TransactionType;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * Created by Kiran Bollepalli on 14,July,2016.
  * kbollepa@visa.com
  */
-public class AcceptServiceTest extends ServiceTestCase<AcceptService> {
+@RunWith(MockitoJUnitRunner.class)
+public class AcceptServiceTest {
   private final String CARD_NUMBER = "4111111111111111";
   private final String CARD_EXPIRATION_MONTH = "11";
   private final String CARD_EXPIRATION_YEAR = "2017";
@@ -24,19 +28,11 @@ public class AcceptServiceTest extends ServiceTestCase<AcceptService> {
       "6gSuV295YD86Mq4d86zEsx8C839uMVVjfXm9N4wr6DRuhTHpDU97NFyKtfZncUq8";
   private final String API_LOGIN_ID = "6AB64hcB";
   TransactionResultReceiver mResultReceiver;
-  Context context = new MockContext();
+  @Mock
+  Context context;
 
-  public AcceptServiceTest() {
-    super(AcceptService.class);
-  }
-
-  public AcceptServiceTest(Class<AcceptService> serviceClass) {
-    super(serviceClass);
-  }
-
-  @Override public void setupService() {
-    super.setupService();
-
+  @Before
+  public void initiate() {
     registerResultReceiver();
   }
 
@@ -45,15 +41,17 @@ public class AcceptServiceTest extends ServiceTestCase<AcceptService> {
     mResultReceiver = new TransactionResultReceiver(new Handler());
   }
 
+  @Test
   public void testStartActionEncrypt() throws Exception {
     AcceptService.startActionEncrypt(context, prepareTransactionObject(), mResultReceiver);
     //assertNotNull(getService());
   }
 
+  @Test
   public void testOnHandleIntent() throws Exception {
-    Intent intent = new Intent(getSystemContext(), AcceptService.class);
+    Intent intent = new Intent(context, AcceptService.class);
     intent.setAction(AcceptService.ACTION_ENCRYPT);
-    startService(intent);
+    context.startService(intent);
     //assertNotNull(getService());
   }
 
